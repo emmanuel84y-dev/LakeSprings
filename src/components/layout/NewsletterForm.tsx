@@ -18,7 +18,7 @@ export function NewsletterForm() {
   }
 
   if (status === 'done') {
-    return <p className="text-xs text-brass">You're subscribed — thank you.</p>;
+    return <p className="text-xs text-brass">You&apos;re subscribed — thank you.</p>;
   }
 
   return (

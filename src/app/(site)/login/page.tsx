@@ -16,14 +16,14 @@ export default function LoginPage({ searchParams }: { searchParams: { redirect?:
 
         {searchParams.error === 'not_authorized' && (
           <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">
-            That account isn't set up for staff access. Contact your administrator.
+            That account isn&apos;t set up for staff access. Contact your administrator.
           </p>
         )}
 
         <LoginForm redirectTo={searchParams.redirect ?? '/admin'} />
 
         <p className="mt-6 text-center text-xs text-ink/40">
-          First time setting up? See the README's Admin Setup section.
+          First time setting up? See the README&apos;s Admin Setup section.
         </p>
       </div>
     </div>

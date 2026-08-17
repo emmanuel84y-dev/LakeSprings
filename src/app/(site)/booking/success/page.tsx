@@ -41,7 +41,7 @@ export default async function BookingSuccessPage({ searchParams }: { searchParam
       <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-600" />
       <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">Reservation received</h1>
       <p className="mt-3 text-ink/60">
-        We've sent a confirmation to <strong>{booking.guest_email}</strong>. Your reservation is <strong>{booking.status}</strong> pending final confirmation from our team.
+        We&apos;ve sent a confirmation to <strong>{booking.guest_email}</strong>. Your reservation is <strong>{booking.status}</strong> pending final confirmation from our team.
       </p>
 
       <div className="mt-8 rounded-xl border border-sand bg-white p-6 text-left">

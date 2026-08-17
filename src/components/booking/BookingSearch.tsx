@@ -108,7 +108,7 @@ export function BookingSearch({ roomTypes, compact }: { roomTypes: string[]; com
 
       {rooms > 1 && (
         <p className="mt-2 text-xs text-ink/50">
-          Booking multiple rooms together? We'll show single-room availability below —{' '}
+          Booking multiple rooms together? We&apos;ll show single-room availability below —{' '}
           <a href="/contact" className="text-brass underline">contact us</a> to arrange a group booking.
         </p>
       )}

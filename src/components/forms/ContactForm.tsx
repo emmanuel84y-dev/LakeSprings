@@ -25,7 +25,7 @@ export function ContactForm() {
   if (status === 'done') {
     return (
       <div className="flex items-center gap-2 rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-        <CheckCircle2 className="h-5 w-5 shrink-0" /> Thank you — we'll get back to you shortly.
+        <CheckCircle2 className="h-5 w-5 shrink-0" /> Thank you — we&apos;ll get back to you shortly.
       </div>
     );
   }

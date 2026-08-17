@@ -27,7 +27,7 @@ export function VisitRequestForm() {
   if (status === 'done') {
     return (
       <div className="flex items-center gap-2 rounded-md bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-        <CheckCircle2 className="h-5 w-5 shrink-0" /> Your visit request has been received — we'll confirm by email.
+        <CheckCircle2 className="h-5 w-5 shrink-0" /> Your visit request has been received — we&apos;ll confirm by email.
       </div>
     );
   }
