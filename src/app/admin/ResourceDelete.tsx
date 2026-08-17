@@ -1,0 +1,2 @@
+import { adminResourceAction } from '@/lib/actions/admin-resources';
+export function ResourceDelete({resource,id}:{resource:string;id:string}) { return <form action={adminResourceAction}><input type="hidden" name="_resource" value={resource}/><input type="hidden" name="_id" value={id}/><input type="hidden" name="_action" value="delete"/><button className="text-xs text-red-600 hover:underline">Delete</button></form> }
