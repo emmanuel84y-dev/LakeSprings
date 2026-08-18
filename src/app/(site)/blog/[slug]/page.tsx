@@ -27,8 +27,6 @@ export default async function BlogPostPage({
 
   if (!post) notFound();
 
-  const publishedDate = post.published_at?.split('T')[0];
-
   return (
     <article className="container-lake max-w-2xl py-16">
       <p className="eyebrow">
@@ -39,9 +37,11 @@ export default async function BlogPostPage({
         {post.title}
       </h1>
 
-      {publishedDate && (
+      {post.published_at && (
         <p className="mt-2 text-sm text-ink/40">
-          {formatDate(publishedDate)}
+          {formatDate(
+            post.published_at.split('T')[0] ?? post.published_at
+          )}
         </p>
       )}
 
