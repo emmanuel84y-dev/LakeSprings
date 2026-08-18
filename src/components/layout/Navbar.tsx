@@ -42,7 +42,13 @@ export function Navbar({ hotelName }: { hotelName: string }) {
       )}
     >
       <div className="container-lake flex h-20 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-display text-xl text-white">
+        <Link
+          href="/"
+          className={cn(
+            'flex items-center gap-2 font-display text-xl transition-colors duration-300',
+            scrolled || open ? 'text-white' : 'text-reservoir'
+          )}
+        >
           <Waves className="h-6 w-6 text-brass" strokeWidth={1.5} />
           {hotelName}
         </Link>
@@ -53,8 +59,12 @@ export function Navbar({ hotelName }: { hotelName: string }) {
               key={link.href}
               href={link.href}
               className={cn(
-                'text-sm text-white/80 transition-colors hover:text-white',
-                pathname === link.href && 'text-brass'
+                'text-sm transition-colors duration-300',
+                pathname === link.href
+                  ? 'text-brass'
+                  : scrolled
+                    ? 'text-white/80 hover:text-white'
+                    : 'text-reservoir hover:text-reservoir/80'
               )}
             >
               {link.label}
@@ -69,7 +79,10 @@ export function Navbar({ hotelName }: { hotelName: string }) {
         </div>
 
         <button
-          className="grid h-10 w-10 place-items-center text-white lg:hidden"
+          className={cn(
+            'grid h-10 w-10 place-items-center transition-colors duration-300 lg:hidden',
+            scrolled || open ? 'text-white' : 'text-reservoir'
+          )}
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
