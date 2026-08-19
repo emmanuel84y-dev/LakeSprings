@@ -15,7 +15,7 @@ export function Hero({
     <section className="relative">
       <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden md:h-[86vh]">
         <Image
-          src="https://picsum.photos/seed/lakesprings-hero/2000/1400"
+          src="/images/hero.jpg"
           alt={`${name} at dusk, viewed across the lake`}
           fill
           priority
