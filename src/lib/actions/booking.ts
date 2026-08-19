@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { bookingSchema } from '@/lib/validation/booking';
+import { sendBookingConfirmationEmail } from '@/lib/email';
 import type { Booking } from '@/types/database';
 
 interface ActionResult {
@@ -26,11 +27,6 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
   const data = parsed.data;
   const supabase = createClient();
 
-  // The database is the final authority here: create_booking() runs
-  // inside a Postgres function that takes an advisory lock on the room
-  // and is backstopped by an exclusion constraint, so two guests
-  // racing for the same dates can never both succeed. We never
-  // pre-compute price or availability on the client and trust it.
   const { data: booking, error } = await supabase.rpc('create_booking', {
     p_room_id: data.room_id,
     p_check_in: data.check_in,
@@ -45,13 +41,29 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
   });
 
   if (error) {
-    // Postgres RAISE EXCEPTION messages from create_booking() are
-    // written to be guest-readable (see 0004_functions.sql) — surface
-    // them directly instead of a raw stack trace.
     return { ok: false, error: error.message.replace(/^.*?:\s*/, '') };
   }
 
-  return { ok: true, booking: booking as Booking };
+  const createdBooking = booking as Booking;
+
+  // Email delivery is deliberately non-blocking: a Resend outage must never
+  // make a successfully-created reservation appear to have failed.
+  try {
+    const { data: room } = await supabase
+      .from('rooms')
+      .select('name')
+      .eq('id', createdBooking.room_id)
+      .maybeSingle();
+
+    await sendBookingConfirmationEmail({
+      ...createdBooking,
+      room_name: room?.name ?? 'LakeSprings Hotels room',
+    });
+  } catch (emailError) {
+    console.error('Booking confirmation email failed:', emailError);
+  }
+
+  return { ok: true, booking: createdBooking };
 }
 
 export async function checkRoomAvailability(roomId: string, checkIn: string, checkOut: string) {
