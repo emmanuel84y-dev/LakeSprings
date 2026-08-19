@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useTransition } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Check, Loader2, AlertCircle } from 'lucide-react';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { FormField } from '@/components/ui/FormField';
-import { cn, formatCurrency, nightsBetween, resolveImageUrl } from '@/lib/utils';
+import { cn, formatCurrency, formatDate, nightsBetween, resolveImageUrl } from '@/lib/utils';
 import { createBooking } from '@/lib/actions/booking';
 import type { RoomWithImages } from '@/types/database';
 
@@ -49,10 +49,21 @@ export function BookingFlow({
 
   const canProceedStep1 = Boolean(room) && nights > 0 && !overCapacity;
 
-  function handleSubmit(formData: FormData) {
-    if (!room) return;
+  useEffect(() => {
+    // Never carry booking errors into a different step. This is especially
+    // important for availability errors after the guest goes back to edit dates.
     setError(null);
     setFieldErrors({});
+  }, [step]);
+
+  function clearErrors() {
+    setError(null);
+    setFieldErrors({});
+  }
+
+  function handleSubmit(formData: FormData) {
+    if (!room) return;
+    clearErrors();
 
     formData.set('room_id', room.id);
     formData.set('check_in', checkIn);
@@ -74,32 +85,29 @@ export function BookingFlow({
   return (
     <div className="grid gap-10 lg:grid-cols-3">
       <div className="lg:col-span-2">
-        {/* Step indicator — a real sequence, so numbered markers earn their place here */}
-        <ol className="flex items-center gap-3 text-sm">
+        <ol className="grid grid-cols-3 gap-2 text-sm">
           {steps.map((label, i) => (
-            <li key={label} className="flex items-center gap-2">
+            <li key={label} className="relative flex min-w-0 items-center justify-center gap-2 text-center">
               <span
                 className={cn(
-                  'flex h-7 w-7 items-center justify-center rounded-full text-xs font-medium',
+                  'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-medium',
                   i < step ? 'bg-brass text-white' : i === step ? 'border-2 border-brass text-brass' : 'border border-sand text-ink/40'
                 )}
               >
                 {i < step ? <Check className="h-3.5 w-3.5" /> : i + 1}
               </span>
-              <span className={i === step ? 'font-medium text-ink' : 'text-ink/40'}>{label}</span>
-              {i < steps.length - 1 && <span className="mx-1 h-px w-8 bg-sand" />}
+              <span className={cn('truncate', i === step ? 'font-medium text-ink' : 'text-ink/40')}>{label}</span>
             </li>
           ))}
         </ol>
 
-        {/* Step 1 — Dates & Guests */}
         {step === 0 && (
           <div className="mt-8 space-y-5">
             <FormField label="Room" htmlFor="room">
               <select
                 id="room"
                 value={roomSlug}
-                onChange={(e) => setRoomSlug(e.target.value)}
+                onChange={(e) => { clearErrors(); setRoomSlug(e.target.value); }}
                 className="w-full rounded-md border border-sand bg-white px-4 py-3 text-sm focus:border-brass focus:outline-none focus:ring-1 focus:ring-brass"
               >
                 {rooms.map((r) => (
@@ -110,19 +118,19 @@ export function BookingFlow({
 
             <div className="grid grid-cols-2 gap-4">
               <FormField label="Check-in" htmlFor="checkin">
-                <Input id="checkin" type="date" min={todayISO()} value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
+                <Input id="checkin" type="date" min={todayISO()} value={checkIn} onChange={(e) => { clearErrors(); setCheckIn(e.target.value); }} />
               </FormField>
               <FormField label="Check-out" htmlFor="checkout">
-                <Input id="checkout" type="date" min={checkIn} value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
+                <Input id="checkout" type="date" min={checkIn} value={checkOut} onChange={(e) => { clearErrors(); setCheckOut(e.target.value); }} />
               </FormField>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <FormField label="Adults" htmlFor="adults">
-                <Input id="adults" type="number" min={1} max={room?.max_guests ?? 10} value={adults} onChange={(e) => setAdults(Number(e.target.value))} />
+                <Input id="adults" type="number" min={1} max={room?.max_guests ?? 10} value={adults} onChange={(e) => { clearErrors(); setAdults(Number(e.target.value)); }} />
               </FormField>
               <FormField label="Children" htmlFor="children">
-                <Input id="children" type="number" min={0} max={room?.max_guests ?? 10} value={children} onChange={(e) => setChildren(Number(e.target.value))} />
+                <Input id="children" type="number" min={0} max={room?.max_guests ?? 10} value={children} onChange={(e) => { clearErrors(); setChildren(Number(e.target.value)); }} />
               </FormField>
             </div>
 
@@ -133,32 +141,42 @@ export function BookingFlow({
               <p className="flex items-center gap-1.5 text-sm text-red-600"><AlertCircle className="h-4 w-4" /> Check-out must be after check-in.</p>
             )}
 
-            <Button type="button" disabled={!canProceedStep1} onClick={() => setStep(1)}>
+            <Button type="button" disabled={!canProceedStep1} onClick={() => { clearErrors(); setStep(1); }}>
               Continue to Review
             </Button>
           </div>
         )}
 
-        {/* Step 2 — Review */}
         {step === 1 && room && (
           <div className="mt-8 space-y-5">
             <div className="rounded-lg border border-sand p-5">
               <h3 className="font-display text-lg text-ink">{room.name}</h3>
-              <dl className="mt-3 grid grid-cols-2 gap-y-2 text-sm text-ink/70">
-                <dt>Check-in</dt><dd className="text-right text-ink">{checkIn}</dd>
-                <dt>Check-out</dt><dd className="text-right text-ink">{checkOut}</dd>
-                <dt>Guests</dt><dd className="text-right text-ink">{adults} adult{adults > 1 ? 's' : ''}{children > 0 ? `, ${children} children` : ''}</dd>
-                <dt>Nights</dt><dd className="text-right text-ink">{nights}</dd>
-              </dl>
+              <div className="mt-3 overflow-hidden rounded-md border border-sand text-sm">
+                <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center border-b border-sand px-4 py-3">
+                  <span className="font-medium text-ink/60">Check-in</span>
+                  <span className="text-left text-ink">{formatDate(checkIn)}</span>
+                </div>
+                <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center border-b border-sand px-4 py-3">
+                  <span className="font-medium text-ink/60">Check-out</span>
+                  <span className="text-left text-ink">{formatDate(checkOut)}</span>
+                </div>
+                <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center border-b border-sand px-4 py-3">
+                  <span className="font-medium text-ink/60">Guests</span>
+                  <span className="text-left text-ink">{adults} adult{adults > 1 ? 's' : ''}{children > 0 ? `, ${children} children` : ''}</span>
+                </div>
+                <div className="grid grid-cols-[7rem_minmax(0,1fr)] items-center px-4 py-3">
+                  <span className="font-medium text-ink/60">Nights</span>
+                  <span className="text-left text-ink">{nights}</span>
+                </div>
+              </div>
             </div>
             <div className="flex gap-3">
-              <Button type="button" variant="outline" onClick={() => setStep(0)}>Back</Button>
-              <Button type="button" onClick={() => setStep(2)}>Continue to Your Details</Button>
+              <Button type="button" variant="outline" onClick={() => { clearErrors(); setStep(0); }}>Back</Button>
+              <Button type="button" onClick={() => { clearErrors(); setStep(2); }}>Continue to Your Details</Button>
             </div>
           </div>
         )}
 
-        {/* Step 3 — Guest details & submit */}
         {step === 2 && room && (
           <form action={handleSubmit} className="mt-8 space-y-5">
             <div className="grid gap-5 sm:grid-cols-2">
@@ -184,7 +202,7 @@ export function BookingFlow({
             )}
 
             <div className="flex gap-3">
-              <Button type="button" variant="outline" onClick={() => setStep(1)} disabled={pending}>Back</Button>
+              <Button type="button" variant="outline" onClick={() => { clearErrors(); setStep(1); }} disabled={pending}>Back</Button>
               <Button type="submit" disabled={pending}>
                 {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Submit Reservation'}
               </Button>
@@ -193,7 +211,6 @@ export function BookingFlow({
         )}
       </div>
 
-      {/* Summary sidebar */}
       <div>
         <div className="sticky top-24 rounded-xl border border-sand bg-white p-6 shadow-card">
           {room && (
