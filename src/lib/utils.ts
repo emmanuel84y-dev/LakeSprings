@@ -13,9 +13,9 @@ export function formatCurrency(amount: number, currency: string = 'NGN') {
 }
 
 export function formatDate(dateStr: string) {
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-NG', {
+    day: '2-digit',
+    month: '2-digit',
     year: 'numeric',
   });
 }
