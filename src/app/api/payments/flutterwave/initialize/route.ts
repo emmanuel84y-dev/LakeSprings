@@ -9,13 +9,49 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Booking reference and email are required' }, { status: 400 });
     }
 
-    const supabase = createClient();
-    const { data: booking, error } = await supabase.rpc('get_booking_by_reference', {
-      p_reference: bookingReference,
-    });
+    const normalizedEmail = String(email).trim().toLowerCase();
+    let booking: any = null;
 
-    if (error || !booking?.[0]?.guest_email || booking[0].guest_email.toLowerCase() !== email.toLowerCase()) {
+    // Normal public lookup first.
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.rpc('get_booking_by_reference', {
+        p_reference: bookingReference,
+      });
+
+      if (!error && data?.[0]) {
+        booking = data[0];
+      } else if (error) {
+        console.error('Booking RPC verification failed; trying trusted server lookup:', error);
+      }
+    } catch (error) {
+      console.error('Booking RPC verification threw; trying trusted server lookup:', error);
+    }
+
+    // Trusted server fallback. This mirrors the confirmation page's fallback
+    // and prevents a stale/missing RPC from blocking a legitimate payment.
+    if (!booking) {
+      const admin = createAdminClient();
+      const { data, error } = await admin
+        .from('bookings')
+        .select('booking_reference, guest_name, guest_email, guest_phone, total_amount, status')
+        .eq('booking_reference', bookingReference)
+        .maybeSingle();
+
+      if (error) {
+        console.error('Trusted booking verification failed:', error);
+        return NextResponse.json({ error: 'Booking could not be verified' }, { status: 400 });
+      }
+
+      booking = data;
+    }
+
+    if (!booking?.guest_email || String(booking.guest_email).trim().toLowerCase() !== normalizedEmail) {
       return NextResponse.json({ error: 'Booking could not be verified' }, { status: 400 });
+    }
+
+    if (booking.status !== 'pending') {
+      return NextResponse.json({ error: 'This booking is no longer awaiting payment.' }, { status: 400 });
     }
 
     const secret = process.env.FLW_SECRET_KEY;
@@ -23,11 +59,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Payments are not configured yet. Add FLW_SECRET_KEY to the server environment.' }, { status: 503 });
     }
 
-    const row = booking[0];
+    const supabase = createClient();
     const { data: payment, error: paymentError } = await supabase.rpc('create_payment_for_booking', {
       p_booking_reference: bookingReference,
-      p_guest_email: email,
-      p_amount: row.total_amount,
+      p_guest_email: normalizedEmail,
+      p_amount: booking.total_amount,
       p_provider: 'flutterwave',
     });
 
@@ -46,13 +82,13 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         tx_ref: txRef,
-        amount: Number(row.total_amount),
+        amount: Number(booking.total_amount),
         currency: 'NGN',
         redirect_url: callbackUrl,
         customer: {
-          email: row.guest_email,
-          name: row.guest_name,
-          phonenumber: row.guest_phone || undefined,
+          email: booking.guest_email,
+          name: booking.guest_name,
+          phonenumber: booking.guest_phone || undefined,
         },
         customizations: {
           title: 'LakeSprings Hotels',
