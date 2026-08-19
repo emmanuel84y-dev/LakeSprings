@@ -16,6 +16,7 @@ type BookingEmailData = {
 
 const RESEND_API_URL = 'https://api.resend.com/emails';
 const FROM = 'LakeSprings Hotels <reservations@lakespringshotels.com.ng>';
+const SITE_URL = 'https://lakespringshotels.com.ng';
 
 function getApiKey() {
   const key = process.env.RESEND_API_KEY;
@@ -37,6 +38,8 @@ function bookingHtml(booking: BookingEmailData, paid: boolean) {
   const statusText = paid
     ? 'Your payment has been successfully verified and your reservation is confirmed.'
     : 'We have received your reservation request. Please complete payment if it is still pending.';
+  const reservationUrl = `${SITE_URL}/booking/success?ref=${encodeURIComponent(booking.booking_reference)}`;
+  const ctaLabel = paid ? 'View Reservation' : 'Confirm Reservation';
 
   return `<!doctype html>
 <html><body style="margin:0;background:#f7f5ef;font-family:Arial,sans-serif;color:#18352b;">
@@ -63,7 +66,7 @@ function bookingHtml(booking: BookingEmailData, paid: boolean) {
         </table>
       </div>
       <p style="margin:24px 0 0;line-height:1.6;color:#52645d;font-size:14px;">Keep your booking reference for your records. If you need assistance, please contact LakeSprings Hotels.</p>
-      <p style="margin:20px 0 0;text-align:center;"><a href="https://lakespringshotels.com.ng/" style="display:inline-block;background:#EFBF04;color:#17382f;text-decoration:none;padding:12px 20px;border-radius:6px;font-weight:700;">Visit LakeSprings Hotels</a></p>
+      <p style="margin:20px 0 0;text-align:center;"><a href="${reservationUrl}" style="display:inline-block;background:#EFBF04;color:#17382f;text-decoration:none;padding:12px 20px;border-radius:6px;font-weight:700;">${ctaLabel}</a></p>
     </div>
     <div style="padding:18px;text-align:center;color:#7a817d;font-size:12px;">© LakeSprings Hotels · lakespringshotels.com.ng</div>
   </div>
