@@ -23,7 +23,7 @@ export default async function BookingPage({ searchParams }: { searchParams: Sear
       <h1 className="mt-2 font-display text-4xl text-ink">Book Your Stay</h1>
 
       {rooms.length > 0 ? (
-        <div className="mt-10">
+        <div className="booking-page-flow mt-10 min-w-0">
           <BookingFlow
             rooms={rooms}
             initialRoomSlug={searchParams.room}
