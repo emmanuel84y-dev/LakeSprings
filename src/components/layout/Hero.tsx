@@ -26,7 +26,7 @@ export function Hero({
 
         <div className="container-lake relative flex h-full flex-col items-start justify-center pb-24 text-white">
           <p className="eyebrow animate-rise text-white/90">Welcome to</p>
-          <h1 className="mt-3 animate-rise font-display text-5xl leading-[1.05] text-brass md:text-7xl">
+          <h1 className="mt-3 animate-rise font-display text-5xl leading-[1.05] text-[#EFBF04] md:text-7xl">
             {name}
           </h1>
           <p className="mt-5 max-w-md animate-rise text-base text-white/80 md:text-lg">
