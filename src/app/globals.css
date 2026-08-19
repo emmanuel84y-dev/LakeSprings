@@ -42,6 +42,57 @@
     @apply mx-auto w-full max-w-container px-6 md:px-10;
   }
 
+  .booking-page-flow {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  /* Keep the booking controls inside the viewport on small screens.
+     The two-column desktop layout becomes a single column on phones,
+     while the step indicator becomes a compact three-column sequence. */
+  @media (max-width: 767px) {
+    .booking-page-flow > * {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .booking-page-flow .grid-cols-2 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .booking-page-flow ol {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .booking-page-flow ol > li {
+      min-width: 0;
+      justify-content: flex-start;
+      align-items: center;
+      flex-direction: column;
+      gap: 0.4rem;
+      text-align: center;
+    }
+
+    .booking-page-flow ol > li > span:nth-child(2) {
+      min-width: 0;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      line-height: 1.2;
+    }
+
+    .booking-page-flow ol > li > span:last-child {
+      display: none;
+    }
+
+    .booking-page-flow .sticky {
+      position: static;
+    }
+  }
+
   /* The signature element: a thin brass "waterline" between sections,
      with a faint mirrored reflection of whatever sits above it —
      literalizing the hotel's own name/setting rather than decorating
