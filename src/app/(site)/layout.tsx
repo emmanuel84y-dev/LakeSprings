@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { WhatsAppButton } from '@/components/layout/WhatsAppButton';
-import { BackLink } from '@/components/layout/BackLink';
 import type { HotelSettings } from '@/types/database';
 
 async function getHotelSettings(): Promise<HotelSettings | null> {
@@ -21,12 +20,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
   return (
     <>
       <Navbar hotelName={settings?.name ?? 'LakeSprings Hotels'} />
-      <main>
-        <div className="container-lake pt-6">
-          <BackLink />
-        </div>
-        {children}
-      </main>
+      <main>{children}</main>
       <Footer settings={settings} />
       <WhatsAppButton phone={settings?.whatsapp} />
     </>
