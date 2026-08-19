@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
-import { BackLink } from '@/components/layout/BackLink';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
@@ -23,12 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     <div className="flex bg-mist">
       <AdminSidebar staffName={profile.full_name} staffRole={profile.role} />
       <div className="min-h-screen flex-1 overflow-x-hidden">
-        <main className="p-6 md:p-10">
-          <div className="mb-6">
-            <BackLink />
-          </div>
-          {children}
-        </main>
+        <main className="p-6 md:p-10">{children}</main>
       </div>
     </div>
   );
