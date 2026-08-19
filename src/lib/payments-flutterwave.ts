@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendPaymentConfirmationEmail } from '@/lib/email';
 
 const FLW_API = 'https://api.flutterwave.com/v3';
 
@@ -61,11 +62,37 @@ export async function markPaymentSuccessful(transactionReference: string, verifi
     .eq('id', payment.id);
   if (paymentError) throw new Error(paymentError.message);
 
+  const { data: booking, error: bookingFetchError } = await admin
+    .from('bookings')
+    .select('id, booking_reference, room_id, guest_name, guest_email, adults, children, check_in_date, check_out_date, nights, total_amount')
+    .eq('id', payment.booking_id)
+    .maybeSingle();
+  if (bookingFetchError) throw new Error(bookingFetchError.message);
+
   const { error: bookingError } = await admin
     .from('bookings')
     .update({ status: 'confirmed' })
     .eq('id', payment.booking_id)
     .eq('status', 'pending');
   if (bookingError) throw new Error(bookingError.message);
+
+  if (booking) {
+    try {
+      const { data: room } = await admin
+        .from('rooms')
+        .select('name')
+        .eq('id', booking.room_id)
+        .maybeSingle();
+
+      await sendPaymentConfirmationEmail({
+        ...booking,
+        room_name: room?.name ?? 'LakeSprings Hotels room',
+      });
+    } catch (emailError) {
+      // Payment/booking state must remain successful even if email delivery is temporarily unavailable.
+      console.error('Payment confirmation email failed:', emailError);
+    }
+  }
+
   return true;
 }
