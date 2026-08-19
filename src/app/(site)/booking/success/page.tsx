@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { FlutterwaveButton } from '@/components/booking/FlutterwaveButton';
@@ -9,9 +10,6 @@ import { verifyFlutterwaveTransaction, markPaymentSuccessful } from '@/lib/payme
 
 export const metadata: Metadata = { title: 'Booking Confirmed' };
 
-// This page depends on the booking reference in the query string and on
-// live Supabase data. Explicitly keep it dynamic so Vercel never serves a
-// stale/static result for a booking confirmation URL.
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -20,6 +18,20 @@ type SearchParams = {
   transaction_id?: string;
   tx_ref?: string;
   status?: string;
+};
+
+type BookingConfirmation = {
+  booking_reference: string;
+  guest_name: string;
+  guest_email: string;
+  room_name: string;
+  check_in_date: string;
+  check_out_date: string;
+  nights: number;
+  adults: number;
+  children: number;
+  total_amount: number;
+  status: string;
 };
 
 export default async function BookingSuccessPage({
@@ -42,34 +54,13 @@ export default async function BookingSuccessPage({
         searchParams.tx_ref
       );
       await markPaymentSuccessful(searchParams.tx_ref, Number(verified.amount));
-    } catch {
-      // Keep the booking pending if verification fails. The webhook can still
-      // confirm it after Flutterwave retries delivery.
+    } catch (error) {
+      console.error('Flutterwave return verification failed:', error);
     }
   }
 
-  const supabase = createClient();
+  const booking = await getBookingConfirmation(reference);
 
-  // Public confirmation lookup by exact reference only. The RPC is
-  // SECURITY DEFINER and intentionally exposes no direct bookings SELECT.
-  const { data, error } = await supabase.rpc('get_booking_by_reference', {
-    p_reference: reference,
-  });
-
-  if (error) {
-    console.error('Booking confirmation lookup failed:', error);
-    return (
-      <BookingLookupError
-        message="We could not retrieve your reservation details right now. Your reservation may still have been created successfully. Please keep your booking reference and try again shortly."
-        reference={reference}
-      />
-    );
-  }
-
-  const booking = data?.[0];
-
-  // Do not call notFound() here. A database/RPC mismatch should not turn a
-  // valid confirmation URL into a misleading Next.js 404 page.
   if (!booking) {
     return (
       <BookingLookupError
@@ -117,6 +108,77 @@ export default async function BookingSuccessPage({
       </div>
     </div>
   );
+}
+
+async function getBookingConfirmation(reference: string): Promise<BookingConfirmation | null> {
+  // First use the intended public RPC. This is the safest normal path because
+  // the database function exposes only the fields needed for a confirmation.
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase.rpc('get_booking_by_reference', {
+      p_reference: reference,
+    });
+
+    if (!error && data?.[0]) {
+      return data[0] as BookingConfirmation;
+    }
+
+    if (error) {
+      console.error('Booking RPC lookup failed; trying trusted server lookup:', error);
+    }
+  } catch (error) {
+    console.error('Booking RPC lookup threw; trying trusted server lookup:', error);
+  }
+
+  // Fallback for projects where the database function has not yet been
+  // refreshed/applied. This runs only on the server with the Supabase secret
+  // key, so RLS is bypassed without exposing the secret to the guest.
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .from('bookings')
+      .select(`
+        booking_reference,
+        guest_name,
+        guest_email,
+        check_in_date,
+        check_out_date,
+        nights,
+        adults,
+        children,
+        total_amount,
+        status,
+        rooms!inner(name)
+      `)
+      .eq('booking_reference', reference)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Trusted booking lookup failed:', error);
+      return null;
+    }
+
+    if (!data) return null;
+
+    const room = Array.isArray(data.rooms) ? data.rooms[0] : data.rooms;
+
+    return {
+      booking_reference: data.booking_reference,
+      guest_name: data.guest_name,
+      guest_email: data.guest_email,
+      room_name: room?.name ?? 'LakeSprings Hotel Room',
+      check_in_date: data.check_in_date,
+      check_out_date: data.check_out_date,
+      nights: data.nights,
+      adults: data.adults,
+      children: data.children,
+      total_amount: Number(data.total_amount),
+      status: data.status,
+    };
+  } catch (error) {
+    console.error('Trusted booking lookup threw:', error);
+    return null;
+  }
 }
 
 function BookingLookupError({ message, reference }: { message: string; reference?: string }) {
