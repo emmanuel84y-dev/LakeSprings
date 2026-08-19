@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
@@ -8,7 +7,7 @@ import { formatCurrency, formatDate } from '@/lib/utils';
 import { FlutterwaveButton } from '@/components/booking/FlutterwaveButton';
 import { verifyFlutterwaveTransaction, markPaymentSuccessful } from '@/lib/payments-flutterwave';
 
-export const metadata: Metadata = { title: 'Booking Confirmed' };
+export const metadata: Metadata = { title: 'Confirm Your Reservation' };
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -45,8 +44,6 @@ export default async function BookingSuccessPage({
     return <BookingLookupError message="No booking reference was provided in the confirmation link." />;
   }
 
-  // Flutterwave redirects back with transaction_id/tx_ref. Verify server-side
-  // before displaying the booking as paid; the webhook provides a second path.
   if (searchParams.transaction_id && searchParams.tx_ref && searchParams.status === 'successful') {
     try {
       const verified = await verifyFlutterwaveTransaction(
@@ -70,13 +67,17 @@ export default async function BookingSuccessPage({
     );
   }
 
+  const isPending = booking.status === 'pending';
+
   return (
     <div className="container-lake max-w-xl py-16 text-center md:py-24">
       <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-600" />
-      <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">Reservation received</h1>
+      <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">
+        {isPending ? 'Your reservation is confirmed!' : 'Your reservation is confirmed'}
+      </h1>
       <p className="mt-3 text-ink/60">
-        We&apos;ve sent a confirmation to <strong>{booking.guest_email}</strong>. Your reservation is{' '}
-        <strong>{booking.status}</strong> pending final confirmation from our team.
+        Your room has been reserved successfully. To complete your reservation, proceed to secure checkout below.
+        We&apos;ve also sent the booking details to <strong>{booking.guest_email}</strong>.
       </p>
 
       <div className="mt-8 rounded-xl border border-sand bg-white p-6 text-left">
@@ -98,8 +99,17 @@ export default async function BookingSuccessPage({
         </dl>
       </div>
 
-      {booking.status === 'pending' && (
-        <FlutterwaveButton reference={booking.booking_reference} email={booking.guest_email} />
+      {isPending ? (
+        <>
+          <p className="mt-6 text-sm font-medium text-ink">
+            Ready to complete your reservation?
+          </p>
+          <FlutterwaveButton reference={booking.booking_reference} email={booking.guest_email} />
+        </>
+      ) : (
+        <div className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+          This reservation has already been paid and confirmed.
+        </div>
       )}
 
       <div className="mt-8 flex justify-center gap-3">
@@ -111,8 +121,6 @@ export default async function BookingSuccessPage({
 }
 
 async function getBookingConfirmation(reference: string): Promise<BookingConfirmation | null> {
-  // First use the intended public RPC. This is the safest normal path because
-  // the database function exposes only the fields needed for a confirmation.
   try {
     const supabase = createClient();
     const { data, error } = await supabase.rpc('get_booking_by_reference', {
@@ -130,9 +138,6 @@ async function getBookingConfirmation(reference: string): Promise<BookingConfirm
     console.error('Booking RPC lookup threw; trying trusted server lookup:', error);
   }
 
-  // Fallback for projects where the database function has not yet been
-  // refreshed/applied. This runs only on the server with the Supabase secret
-  // key, so RLS is bypassed without exposing the secret to the guest.
   try {
     const admin = createAdminClient();
     const { data, error } = await admin
