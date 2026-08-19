@@ -30,8 +30,8 @@ export default async function AdminRoomsPage() {
           />
         </div>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-xl border border-sand bg-white">
-          <table className="w-full text-sm">
+        <div className="mt-8 overflow-x-auto rounded-xl border border-sand bg-white">
+          <table className="w-full min-w-[760px] text-sm">
             <thead className="border-b border-sand bg-mist/60 text-left text-xs uppercase tracking-wide text-ink/50">
               <tr>
                 <th className="px-5 py-3">Room</th>
