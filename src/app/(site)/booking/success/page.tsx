@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { verifyFlutterwaveTransaction, markPaymentSuccessful } from '@/lib/payments-flutterwave';
 
-export const metadata: Metadata = { title: 'Reservation Status' };
+export const metadata: Metadata = { title: 'Confirm Reservation' };
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -30,6 +30,8 @@ export default async function BookingSuccessPage({ searchParams }: { searchParam
   const reference = searchParams.ref?.trim();
   if (!reference) return <BookingLookupError message="No booking reference was provided in the confirmation link." />;
 
+  // Flutterwave redirects back with transaction_id/tx_ref. Verify server-side
+  // before displaying the booking as paid; the webhook provides a second path.
   if (searchParams.transaction_id && searchParams.tx_ref && searchParams.status === 'successful') {
     try {
       const verified = await verifyFlutterwaveTransaction(searchParams.transaction_id, searchParams.tx_ref);
@@ -51,12 +53,12 @@ export default async function BookingSuccessPage({ searchParams }: { searchParam
       <div className="text-center">
         {paid ? <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-600" /> : <Clock3 className="mx-auto h-14 w-14 text-brass" />}
         <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">
-          {paid ? 'Reservation confirmed' : 'Reservation awaiting payment'}
+          {paid ? 'Reservation confirmed' : 'Confirm Reservation'}
         </h1>
         <p className="mt-3 text-ink/60">
           {paid
             ? <>Your payment has been verified successfully. Your reservation is confirmed, and a confirmation email has been sent to <strong>{booking.guest_email}</strong>.</>
-            : <>Your reservation request has been received, but it is <strong>not confirmed yet</strong>. Complete payment to secure your room.</>}
+            : <>Your reservation details have been received. We&apos;ll send an email to <strong>{booking.guest_email}</strong> with a link to confirm your reservation and proceed to secure checkout.</>}
         </p>
       </div>
 
@@ -78,10 +80,9 @@ export default async function BookingSuccessPage({ searchParams }: { searchParam
 
       {!paid && (
         <div className="mt-6 rounded-xl border border-sand bg-cream p-5 text-center">
-          <p className="text-sm text-ink/65">Your room is being held while you complete payment.</p>
-          <div className="mt-4 flex justify-center">
-            <Button href={`/booking/checkout?ref=${encodeURIComponent(booking.booking_reference)}`}>Complete Payment</Button>
-          </div>
+          <p className="text-sm leading-6 text-ink/65">
+            No payment is required on this page. Please check your email for your reservation confirmation link.
+          </p>
         </div>
       )}
 
