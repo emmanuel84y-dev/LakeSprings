@@ -9,7 +9,7 @@ interface BackLinkProps {
   className?: string;
 }
 
-export function BackLink({ href, label = 'Back', className = '' }: BackLinkProps) {
+export function BackLink({ href = '', label = 'Back', className = '' }: BackLinkProps) {
   const router = useRouter();
 
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -21,7 +21,7 @@ export function BackLink({ href, label = 'Back', className = '' }: BackLinkProps
 
   return (
     <a
-      href={href ?? '#'}
+      href={href || '#'}
       onClick={handleClick}
       className={`inline-flex items-center gap-2 text-sm font-medium text-ink/60 transition-colors hover:text-brass ${className}`}
       aria-label={label}
