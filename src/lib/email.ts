@@ -34,11 +34,13 @@ function escapeHtml(value: string) {
 }
 
 function bookingHtml(booking: BookingEmailData, paid: boolean) {
-  const status = paid ? 'Payment confirmed' : 'Reservation received';
+  const status = paid ? 'Payment confirmed' : 'Reservation request received';
   const statusText = paid
-    ? 'Your payment has been successfully verified and your reservation is confirmed.'
-    : 'We have received your reservation request. Please complete payment if it is still pending.';
-  const reservationUrl = `${SITE_URL}/booking/success?ref=${encodeURIComponent(booking.booking_reference)}`;
+    ? 'Your payment has been successfully verified and your reservation is now confirmed.'
+    : 'We have received your reservation request. Your room is being held while you complete payment. Your reservation is not confirmed until payment is successfully verified.';
+  const reservationUrl = paid
+    ? `${SITE_URL}/booking/success?ref=${encodeURIComponent(booking.booking_reference)}`
+    : `${SITE_URL}/booking/checkout?ref=${encodeURIComponent(booking.booking_reference)}`;
   const ctaLabel = paid ? 'View Reservation' : 'Confirm Reservation';
 
   return `<!doctype html>
@@ -93,7 +95,7 @@ async function sendEmail(to: string, subject: string, html: string, idempotencyK
 export async function sendBookingConfirmationEmail(booking: BookingEmailData) {
   return sendEmail(
     booking.guest_email,
-    `Booking confirmation — ${booking.booking_reference}`,
+    `Reservation request — ${booking.booking_reference}`,
     bookingHtml(booking, false),
     `booking-confirmation/${booking.booking_reference}`
   );
