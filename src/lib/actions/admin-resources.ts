@@ -20,24 +20,45 @@ const allowed: Record<string, { table: string; path: string; manager?: boolean }
   payments: { table: 'payments', path: '/admin/payments', manager: true },
 };
 
+const IMAGE_FIELDS = ['storage_path', 'image_path', 'featured_image_path'];
+const IMAGE_BUCKETS: Record<string, string> = {
+  gallery: 'gallery-images',
+  offers: 'hotel-images',
+  testimonials: 'testimonial-images',
+  blog_posts: 'blog-images',
+};
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
 async function requireStaff(manager = false, superAdmin = false) {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect('/login?redirect=/admin');
   const { data: profile } = await supabase.from('profiles').select('role, active').eq('id', user.id).single();
-  if (!profile?.active || (superAdmin && profile.role !== 'super_admin') || (manager && !['manager', 'super_admin'].includes(profile.role))) {
-    redirect('/admin?error=not_authorized');
-  }
+  if (!profile?.active || (superAdmin && profile.role !== 'super_admin') || (manager && !['manager', 'super_admin'].includes(profile.role))) redirect('/admin?error=not_authorized');
   return { supabase, user, profile };
 }
 
-function value(form: FormData, key: string, fallback = '') {
-  const v = form.get(key);
-  return v === null ? fallback : String(v);
-}
+function value(form: FormData, key: string, fallback = '') { const v = form.get(key); return v === null ? fallback : String(v); }
 function bool(form: FormData, key: string) { return form.get(key) === 'on'; }
 function num(form: FormData, key: string, fallback = 0) { const n = Number(form.get(key)); return Number.isFinite(n) ? n : fallback; }
 function nullable(v: string) { return v.trim() ? v.trim() : null; }
+
+async function prepareImageField(supabase: ReturnType<typeof createClient>, form: FormData, resource: string, field: string, currentValue: string | null) {
+  const url = String(form.get(field) ?? '').trim();
+  const file = form.get(`${field}__file`) as File | null;
+  if (!file || file.size === 0) return url || currentValue || null;
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) throw new Error('Use a JPEG, PNG, or WebP image');
+  if (file.size > MAX_IMAGE_BYTES) throw new Error('Image must be under 5MB');
+
+  const bucket = IMAGE_BUCKETS[resource];
+  if (!bucket) throw new Error('Image uploads are not configured for this resource');
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+  const path = `${resource}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from(bucket).upload(path, file, { contentType: file.type, upsert: false });
+  if (error) throw new Error('Upload failed. Please try again.');
+  return path;
+}
 
 export async function adminResourceAction(form: FormData) {
   const resource = value(form, '_resource');
@@ -71,6 +92,17 @@ export async function adminResourceAction(form: FormData) {
     case 'profiles': row = { full_name:value(form,'full_name'), email:value(form,'email'), role:value(form,'role','staff'), active:bool(form,'active') }; break;
     case 'blocked_dates': row = { room_id:value(form,'room_id'), start_date:value(form,'start_date'), end_date:value(form,'end_date'), block_type:value(form,'block_type','manual'), reason:nullable(value(form,'reason')) }; break;
     case 'payments': row = { booking_id:value(form,'booking_id'), amount:num(form,'amount'), currency:value(form,'currency','NGN'), provider:nullable(value(form,'provider')), transaction_reference:nullable(value(form,'transaction_reference')), status:value(form,'status','pending'), payment_date:nullable(value(form,'payment_date')) }; break;
+  }
+
+  try {
+    for (const field of IMAGE_FIELDS) {
+      if (Object.prototype.hasOwnProperty.call(row, field)) {
+        const current = id ? String((await supabase.from(config.table).select(field).eq('id', id).maybeSingle()).data?.[field] ?? '') : '';
+        row[field] = await prepareImageField(supabase, form, resource, field, current);
+      }
+    }
+  } catch (error) {
+    redirect(`${path}?error=${encodeURIComponent(error instanceof Error ? error.message : 'Image upload failed')}`);
   }
 
   const query = id ? supabase.from(config.table).update(row).eq('id', id) : supabase.from(config.table).insert(row);
