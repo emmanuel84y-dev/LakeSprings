@@ -97,7 +97,11 @@ export async function adminResourceAction(form: FormData) {
   try {
     for (const field of IMAGE_FIELDS) {
       if (Object.prototype.hasOwnProperty.call(row, field)) {
-        const current = id ? String((await supabase.from(config.table).select(field).eq('id', id).maybeSingle()).data?.[field] ?? '') : '';
+        const result = id
+          ? await supabase.from(config.table).select(field).eq('id', id).maybeSingle()
+          : null;
+        const currentRow = result?.data as Record<string, unknown> | null;
+        const current = currentRow ? String(currentRow[field] ?? '') : '';
         row[field] = await prepareImageField(supabase, form, resource, field, current);
       }
     }
