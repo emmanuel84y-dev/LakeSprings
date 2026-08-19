@@ -4,6 +4,7 @@ import { RoomForm } from '@/components/admin/RoomForm';
 import { RoomImageManager } from '@/components/admin/RoomImageManager';
 import { ArchiveRoomButton } from '@/components/admin/ArchiveRoomButton';
 import { updateRoom } from '@/lib/actions/rooms-admin';
+import { BackLink } from '@/components/layout/BackLink';
 
 export default async function EditRoomPage({ params }: { params: { id: string } }) {
   const [result, amenities] = await Promise.all([
@@ -17,6 +18,8 @@ export default async function EditRoomPage({ params }: { params: { id: string } 
 
   return (
     <div>
+      <BackLink href="/admin/rooms" label="Back to Rooms" className="mb-6" />
+
       <div className="flex items-center justify-between">
         <div>
           <p className="eyebrow">Rooms</p>
