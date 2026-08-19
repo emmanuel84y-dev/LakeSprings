@@ -13,11 +13,11 @@ export function formatCurrency(amount: number, currency: string = 'NGN') {
 }
 
 export function formatDate(dateStr: string) {
-  return new Date(dateStr + 'T00:00:00').toLocaleDateString('en-NG', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
+  const date = new Date(dateStr + 'T00:00:00');
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
 }
 
 export function nightsBetween(checkIn: string, checkOut: string) {
