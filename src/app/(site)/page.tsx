@@ -76,7 +76,7 @@ export default async function HomePage() {
         <div className="container-lake grid gap-10 md:grid-cols-2 md:items-center">
           <div>
             <p className="eyebrow text-brass/90">The Setting</p>
-            <h2 className="mt-2 font-display text-3xl leading-tight md:text-4xl">
+            <h2 className="mt-2 font-display text-3xl leading-tight text-brass md:text-4xl">
               Beside still water, in the middle of the city
             </h2>
             <p className="mt-4 max-w-md text-white/70">{settings?.description}</p>
