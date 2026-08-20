@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { FormField } from '@/components/ui/FormField';
@@ -25,13 +25,19 @@ export function RoomForm({ action, room, amenities, selectedAmenityIds = [], sub
   const [slug, setSlug] = useState(room?.slug ?? '');
   const [slugTouched, setSlugTouched] = useState(Boolean(room));
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
   const [pending, startTransition] = useTransition();
 
   function handleSubmit(formData: FormData) {
     setError(null);
+    setSaved(false);
     startTransition(async () => {
       const result = await action(formData);
-      if (result && !result.ok) setError(result.error ?? 'Something went wrong');
+      if (result && !result.ok) {
+        setError(result.error ?? 'Something went wrong');
+        return;
+      }
+      setSaved(true);
     });
   }
 
@@ -111,6 +117,12 @@ export function RoomForm({ action, room, amenities, selectedAmenityIds = [], sub
       {error && (
         <p className="flex items-center gap-1.5 rounded-md bg-red-50 px-3 py-2.5 text-sm text-red-700">
           <AlertCircle className="h-4 w-4 shrink-0" /> {error}
+        </p>
+      )}
+
+      {saved && (
+        <p className="flex items-center gap-1.5 rounded-md bg-green-50 px-3 py-2.5 text-sm font-medium text-green-700">
+          <CheckCircle2 className="h-4 w-4 shrink-0" /> Changes saved successfully.
         </p>
       )}
 
