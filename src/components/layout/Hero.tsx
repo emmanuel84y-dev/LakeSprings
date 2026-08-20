@@ -32,7 +32,7 @@ export function Hero({
           sizes="(max-width: 767px) 0vw, 100vw"
           className="hidden object-cover md:block"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-reservoir/85 via-reservoir/20 to-reservoir/40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-reservoir/90 via-reservoir/30 to-reservoir/50" />
 
         <div className="container-lake relative flex h-full flex-col items-start justify-center pb-24 text-white">
           <p className="eyebrow animate-rise text-white/90">Welcome to</p>
