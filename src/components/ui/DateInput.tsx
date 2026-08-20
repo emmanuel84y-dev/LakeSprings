@@ -52,7 +52,7 @@ export function DateInput({
         placeholder="dd/mm/yyyy"
         aria-label={id === 'checkin' ? 'Check-in date, dd/mm/yyyy' : id === 'checkout' ? 'Check-out date, dd/mm/yyyy' : 'Date, dd/mm/yyyy'}
         onClick={openPicker}
-        className="w-full cursor-pointer bg-transparent pr-10 text-sm text-ink focus:outline-none"
+        className="w-full cursor-pointer bg-transparent text-sm text-ink focus:outline-none"
       />
       <input
         ref={dateInputRef}
@@ -64,17 +64,6 @@ export function DateInput({
         aria-hidden="true"
         className="pointer-events-none absolute right-0 top-0 h-full w-full opacity-0"
       />
-      <button
-        type="button"
-        onClick={openPicker}
-        aria-label="Open date picker"
-        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-ink/60"
-      >
-        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-          <rect x="3" y="4.5" width="18" height="16" rx="2" />
-          <path d="M16 2.5v4M8 2.5v4M3 9h18" />
-        </svg>
-      </button>
     </div>
   );
 }
