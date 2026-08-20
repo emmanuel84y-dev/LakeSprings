@@ -3,6 +3,7 @@ import { CheckCircle2, Clock3, AlertCircle } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { Button } from '@/components/ui/Button';
+import { BackLink } from '@/components/layout/BackLink';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { verifyFlutterwaveTransaction, markPaymentSuccessful } from '@/lib/payments-flutterwave';
 
@@ -50,6 +51,7 @@ export default async function BookingSuccessPage({ searchParams }: { searchParam
 
   return (
     <main className="container-lake max-w-xl py-16 md:py-24">
+      <BackLink href="/booking" className="mb-8" />
       <div className="text-center">
         {paid ? <CheckCircle2 className="mx-auto h-14 w-14 text-emerald-600" /> : <Clock3 className="mx-auto h-14 w-14 text-brass" />}
         <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">
@@ -135,6 +137,7 @@ async function getBookingConfirmation(reference: string): Promise<BookingConfirm
 function BookingLookupError({ message, reference }: { message: string; reference?: string }) {
   return (
     <main className="container-lake max-w-xl py-16 text-center md:py-24">
+      <BackLink href="/booking" className="mb-8" />
       <AlertCircle className="mx-auto h-14 w-14 text-brass" />
       <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">Booking status</h1>
       <p className="mt-3 text-ink/60">{message}</p>
