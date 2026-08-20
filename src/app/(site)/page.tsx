@@ -1,9 +1,11 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { createClient } from '@/lib/supabase/server';
 import { getFeaturedRooms, getRoomTypes } from '@/lib/data/rooms';
 import { Hero } from '@/components/layout/Hero';
 import { RoomCard } from '@/components/rooms/RoomCard';
 import { Button } from '@/components/ui/Button';
+import { resolveImageUrl } from '@/lib/utils';
 import type { HotelSettings, Testimonial } from '@/types/database';
 import { Star } from 'lucide-react';
 
@@ -24,12 +26,26 @@ async function getTestimonials(): Promise<Testimonial[]> {
   return (data as Testimonial[]) ?? [];
 }
 
+async function getSettingImages() {
+  const supabase = createClient();
+  const { data } = await supabase
+    .from('gallery')
+    .select('category, storage_path')
+    .in('category', ['setting_1', 'setting_2']);
+  const rows = data ?? [];
+  return {
+    one: rows.find((row) => row.category === 'setting_1')?.storage_path ?? null,
+    two: rows.find((row) => row.category === 'setting_2')?.storage_path ?? null,
+  };
+}
+
 export default async function HomePage() {
-  const [settings, rooms, roomTypes, testimonials] = await Promise.all([
+  const [settings, rooms, roomTypes, testimonials, settingImages] = await Promise.all([
     getSettings(),
     getFeaturedRooms(),
     getRoomTypes(),
     getTestimonials(),
+    getSettingImages(),
   ]);
 
   return (
@@ -85,8 +101,20 @@ export default async function HomePage() {
             </Button>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="aspect-[3/4] overflow-hidden rounded-lg bg-still" />
-            <div className="mt-8 aspect-[3/4] overflow-hidden rounded-lg bg-still" />
+            {settingImages.one ? (
+              <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-still">
+                <Image src={resolveImageUrl(settingImages.one, 'gallery-images')} alt="LakeSprings setting" fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
+              </div>
+            ) : (
+              <div className="aspect-[3/4] overflow-hidden rounded-lg bg-still" />
+            )}
+            {settingImages.two ? (
+              <div className="relative mt-8 aspect-[3/4] overflow-hidden rounded-lg bg-still">
+                <Image src={resolveImageUrl(settingImages.two, 'gallery-images')} alt="LakeSprings setting" fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
+              </div>
+            ) : (
+              <div className="mt-8 aspect-[3/4] overflow-hidden rounded-lg bg-still" />
+            )}
           </div>
         </div>
       </section>
