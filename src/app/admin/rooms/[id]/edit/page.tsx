@@ -18,7 +18,7 @@ export default async function EditRoomPage({ params }: { params: { id: string } 
 
   return (
     <div>
-      <BackLink href="/admin/rooms" label="Back to Rooms" className="mb-6" />
+      <BackLink href="/admin/rooms" className="mb-6" />
 
       <div className="flex items-center justify-between">
         <div>
