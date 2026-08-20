@@ -4,6 +4,7 @@ import { Users, BedDouble, Ruler, Layers, Check } from 'lucide-react';
 import { getRoomBySlug } from '@/lib/data/rooms';
 import { RoomGallery } from '@/components/rooms/RoomGallery';
 import { RoomAvailabilityWidget } from '@/components/booking/RoomAvailabilityWidget';
+import { BackLink } from '@/components/layout/BackLink';
 import { formatCurrency } from '@/lib/utils';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
@@ -26,6 +27,7 @@ export default async function RoomDetailPage({ params }: { params: { slug: strin
 
   return (
     <div className="container-lake py-10 md:py-16">
+      <BackLink href="/rooms" className="mb-6" />
       <p className="eyebrow">{room.room_type}</p>
       <h1 className="mt-2 font-display text-4xl text-ink md:text-5xl">{room.name}</h1>
 
