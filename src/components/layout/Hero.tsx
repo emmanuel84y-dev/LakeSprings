@@ -14,13 +14,23 @@ export function Hero({
   return (
     <section className="relative">
       <div className="relative h-[78vh] min-h-[560px] w-full overflow-hidden md:h-[86vh]">
+        {/* Dedicated mobile image to prevent the desktop hero from being
+            aggressively cropped/upscaled on small screens. */}
+        <Image
+          src="/images/hero-sm.jpg"
+          alt={`${name} at dusk, viewed across the lake`}
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover md:hidden"
+        />
         <Image
           src="/images/hero.jpg"
           alt={`${name} at dusk, viewed across the lake`}
           fill
           priority
-          sizes="100vw"
-          className="object-cover"
+          sizes="(max-width: 767px) 0vw, 100vw"
+          className="hidden object-cover md:block"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-reservoir/85 via-reservoir/20 to-reservoir/40" />
 
