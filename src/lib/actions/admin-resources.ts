@@ -114,7 +114,8 @@ export async function adminResourceAction(form: FormData) {
   if (error) redirect(`${path}?error=${encodeURIComponent(error.message)}`);
   revalidatePath(path);
   if (resource === 'hotel_settings') { revalidatePath('/'); revalidatePath('/rooms'); }
-  redirect(`${path}?saved=1`);
+  const successQuery = resource === 'blog_posts' && id ? `?edit=${encodeURIComponent(id)}&saved=1` : '?saved=1';
+  redirect(`${path}${successQuery}`);
 }
 
 export async function updatePaymentStatus(paymentId: string, status: string) {
