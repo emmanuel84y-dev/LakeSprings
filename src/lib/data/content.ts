@@ -11,6 +11,7 @@ export async function getGallery(category?: string): Promise<GalleryItem[]> {
   const supabase = createClient();
   let query = supabase.from('gallery').select('*').order('display_order');
   if (category) query = query.eq('category', category);
+  else query = query.not('category', 'in', '(setting_1,setting_2)');
   const { data } = await query;
   return (data as GalleryItem[]) ?? [];
 }
