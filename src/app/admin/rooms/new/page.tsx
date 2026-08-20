@@ -8,7 +8,7 @@ export default async function NewRoomPage() {
 
   return (
     <div>
-      <BackLink href="/admin/rooms" label="Back to Rooms" className="mb-6" />
+      <BackLink href="/admin/rooms" className="mb-6" />
       <p className="eyebrow">Rooms</p>
       <h1 className="mt-1 font-display text-3xl text-ink">Add Room</h1>
       <p className="mt-1 text-sm text-ink/60">This room becomes bookable on the public site the moment you save it.</p>
