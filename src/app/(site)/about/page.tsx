@@ -26,7 +26,7 @@ export default async function AboutPage() {
         <div className="container-lake relative flex h-full items-end pb-12 text-white">
           <div>
             <p className="eyebrow text-white/80">About Us</p>
-            <h1 className="mt-2 font-display text-4xl md:text-5xl">{settings?.name ?? 'LakeSprings Hotels'}</h1>
+            <h1 className="mt-2 font-display text-4xl text-[#EFBF04] md:text-5xl">{settings?.name ?? 'LakeSprings Hotels'}</h1>
           </div>
         </div>
       </div>
