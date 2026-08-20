@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getBlogPostBySlug } from '@/lib/data/content';
 import { formatDate } from '@/lib/utils';
+import { BackLink } from '@/components/layout/BackLink';
 
 export async function generateMetadata({
   params,
@@ -29,6 +30,7 @@ export default async function BlogPostPage({
 
   return (
     <article className="container-lake max-w-2xl py-16">
+      <BackLink href="/blog" className="mb-6" />
       <p className="eyebrow">
         {post.blog_categories?.name ?? 'Hotel News'}
       </p>
