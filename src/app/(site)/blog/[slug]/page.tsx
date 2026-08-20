@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getBlogPostBySlug } from '@/lib/data/content';
 import { formatDate } from '@/lib/utils';
 import { BackLink } from '@/components/layout/BackLink';
+import { MarkdownContent } from '@/components/blog/MarkdownContent';
 
 export async function generateMetadata({
   params,
@@ -47,13 +48,7 @@ export default async function BlogPostPage({
         </p>
       )}
 
-      <div className="prose prose-neutral mt-8 max-w-none leading-relaxed text-ink/80">
-        {post.content.split('\n').map((paragraph, i) => (
-          <p key={i} className="mb-4">
-            {paragraph}
-          </p>
-        ))}
-      </div>
+      <MarkdownContent content={post.content} />
 
       {post.tags.length > 0 && (
         <div className="mt-8 flex flex-wrap gap-2">
