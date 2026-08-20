@@ -3,11 +3,10 @@ import { MessageCircle } from 'lucide-react';
 export function WhatsAppButton({ phone }: { phone: string | null | undefined }) {
   if (!phone) return null;
   const digits = phone.replace(/[^\d]/g, '');
-  const message = encodeURIComponent('Hello LakeSprings Hotels, I would like to make a reservation.');
 
   return (
     <a
-      href={`https://wa.me/${digits}?text=${message}`}
+      href={`https://wa.me/${digits}`}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat with us on WhatsApp"
