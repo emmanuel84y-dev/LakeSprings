@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Check, Loader2, AlertCircle } from 'lucide-react';
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { FormField } from '@/components/ui/FormField';
+import { DateInput } from '@/components/ui/DateInput';
 import { cn, formatCurrency, formatDate, nightsBetween, resolveImageUrl } from '@/lib/utils';
 import { createBooking } from '@/lib/actions/booking';
 import type { RoomWithImages } from '@/types/database';
@@ -50,8 +51,6 @@ export function BookingFlow({
   const canProceedStep1 = Boolean(room) && nights > 0 && !overCapacity;
 
   useEffect(() => {
-    // Never carry booking errors into a different step. This is especially
-    // important for availability errors after the guest goes back to edit dates.
     setError(null);
     setFieldErrors({});
   }, [step]);
@@ -118,10 +117,10 @@ export function BookingFlow({
 
             <div className="grid grid-cols-2 gap-4">
               <FormField label="Check-in" htmlFor="checkin">
-                <Input id="checkin" type="date" min={todayISO()} value={checkIn} onChange={(e) => { clearErrors(); setCheckIn(e.target.value); }} />
+                <DateInput id="checkin" required value={checkIn} min={todayISO()} onChange={(value) => { clearErrors(); setCheckIn(value); }} />
               </FormField>
               <FormField label="Check-out" htmlFor="checkout">
-                <Input id="checkout" type="date" min={checkIn} value={checkOut} onChange={(e) => { clearErrors(); setCheckOut(e.target.value); }} />
+                <DateInput id="checkout" required value={checkOut} min={checkIn} onChange={(value) => { clearErrors(); setCheckOut(value); }} />
               </FormField>
             </div>
 
