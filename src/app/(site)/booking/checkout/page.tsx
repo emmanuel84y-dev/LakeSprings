@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { AlertCircle, ShieldCheck } from 'lucide-react';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { Button } from '@/components/ui/Button';
+import { BackLink } from '@/components/layout/BackLink';
 import { FlutterwaveButton } from '@/components/booking/FlutterwaveButton';
 import { formatCurrency, formatDate } from '@/lib/utils';
 
@@ -43,6 +44,7 @@ export default async function BookingCheckoutPage({
   if (booking.status !== 'pending') {
     return (
       <main className="container-lake max-w-xl py-16 text-center md:py-24">
+        <BackLink href="/booking" className="mb-8" />
         <ShieldCheck className="mx-auto h-14 w-14 text-emerald-600" />
         <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">Reservation already processed</h1>
         <p className="mt-3 text-ink/60">
@@ -58,6 +60,7 @@ export default async function BookingCheckoutPage({
 
   return (
     <main className="container-lake max-w-xl py-12 md:py-20">
+      <BackLink href="/booking" className="mb-8" />
       <div className="text-center">
         <ShieldCheck className="mx-auto h-14 w-14 text-brass" />
         <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-brass">Reservation request received</p>
@@ -127,6 +130,7 @@ async function getBooking(reference: string): Promise<Booking | null> {
 function CheckoutError({ message, reference }: { message: string; reference?: string }) {
   return (
     <main className="container-lake max-w-xl py-16 text-center md:py-24">
+      <BackLink href="/booking" className="mb-8" />
       <AlertCircle className="mx-auto h-14 w-14 text-brass" />
       <h1 className="mt-6 font-display text-3xl text-ink md:text-4xl">Reservation checkout</h1>
       <p className="mt-3 text-ink/60">{message}</p>
