@@ -22,7 +22,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Navbar hotelName={settings?.name ?? 'LakeSprings Hotels'} />
       <main>{children}</main>
       <Footer settings={settings} />
-      <WhatsAppButton phone={settings?.whatsapp} />
+      <WhatsAppButton phone="+234 8145795949" />
     </>
   );
 }
