@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CalendarDays, Users, Search } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { DateInput } from '@/components/ui/DateInput';
 
 const todayISO = () => new Date().toISOString().split('T')[0];
 const tomorrowISO = () => {
@@ -38,25 +39,11 @@ export function BookingSearch({ roomTypes, compact }: { roomTypes: string[]; com
     <form onSubmit={handleSubmit} className={compact ? 'space-y-4' : ''}>
       <div className={`grid gap-4 ${compact ? 'grid-cols-1' : 'grid-cols-2 lg:grid-cols-6'}`}>
         <Field label="Check-in" icon={CalendarDays}>
-          <input
-            type="date"
-            required
-            min={todayISO()}
-            value={checkIn}
-            onChange={(e) => setCheckIn(e.target.value)}
-            className="w-full bg-transparent text-sm text-ink focus:outline-none"
-          />
+          <DateInput id="checkin" required value={checkIn} min={todayISO()} onChange={setCheckIn} />
         </Field>
 
         <Field label="Check-out" icon={CalendarDays}>
-          <input
-            type="date"
-            required
-            min={checkIn}
-            value={checkOut}
-            onChange={(e) => setCheckOut(e.target.value)}
-            className="w-full bg-transparent text-sm text-ink focus:outline-none"
-          />
+          <DateInput id="checkout" required value={checkOut} min={checkIn} onChange={setCheckOut} />
         </Field>
 
         <Field label="Adults" icon={Users}>
