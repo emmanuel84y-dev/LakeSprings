@@ -12,12 +12,14 @@ export function ResourceForm({ resource, fields, id, title = 'Add item' }: { res
   const [open, setOpen] = useState(Boolean(id));
   return (
     <div className="rounded-xl border border-sand bg-white p-5">
-      <button type="button" onClick={() => setOpen(v => !v)} className="font-medium text-ink">{open ? 'Hide' : '+'} {title}</button>
+      <button type="button" onClick={() => setOpen(v => !v)} className="font-medium text-ink">{open ? 'Hide' : '+ ' + title}</button>
       {open && (
         <form action={adminResourceAction} className="mt-5 grid gap-4 md:grid-cols-2">
           <input type="hidden" name="_resource" value={resource} />
           <input type="hidden" name="_id" value={id ?? ''} />
-          {fields.map(f => (
+          {fields.map(f => f.type === 'hidden' ? (
+            <input key={f.name} type="hidden" name={f.name} value={String(f.value ?? '')} />
+          ) : (
             <label key={f.name} className="block text-sm text-ink/70 md:col-span-1">
               <span className="mb-1 block">{f.label}</span>
               {isImageField(f) ? (
@@ -62,9 +64,8 @@ function ImageField({ field }: { field: Field }) {
         type="url"
         value={url}
         onChange={e => { setUrl(e.target.value); setPreview(e.target.value); }}
-        placeholder="Paste an image URL (https://...)"
+        placeholder="Optional image URL — or upload a file below"
         className="w-full rounded-md border border-sand px-3 py-2"
-        required={field.required}
       />
       <div className="flex items-center gap-3">
         <input
