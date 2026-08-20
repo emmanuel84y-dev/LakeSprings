@@ -48,7 +48,7 @@ export function ResourceForm({ resource, fields, id, title = 'Add item' }: { res
           </form>
         </>
       )}
-      {saved && !id && <p className="mt-3 text-sm font-medium text-green-700">Changes saved successfully.</p>}
+      {saved && <p className="mt-3 text-sm font-medium text-green-700">Changes saved successfully.</p>}
     </div>
   );
 }
