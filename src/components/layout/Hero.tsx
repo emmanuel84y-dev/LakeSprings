@@ -36,7 +36,7 @@ export function Hero({
 
         <div className="container-lake relative flex h-full flex-col items-start justify-center pb-24 text-white">
           <p className="eyebrow animate-rise text-white/90">Welcome to</p>
-          <h1 className="mt-3 animate-rise font-display text-5xl font-medium leading-[1.05] text-[#D4AF37] drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] md:text-7xl">
+          <h1 className="mt-3 animate-rise bg-gradient-to-b from-[#FFF3B0] via-[#D4AF37] to-[#B8860B] bg-clip-text font-display text-5xl font-medium leading-[1.05] text-transparent drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)] md:text-7xl">
             {name}
           </h1>
           <p className="mt-5 max-w-md animate-rise text-base text-white/80 md:text-lg">
