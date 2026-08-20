@@ -11,7 +11,17 @@ export default async function AboutPage() {
   return (
     <div>
       <div className="relative h-[50vh] min-h-[360px] w-full overflow-hidden">
-        <Image src="https://picsum.photos/seed/lakesprings-about/1800/1000" alt="LakeSprings Hotels exterior" fill className="object-cover" />
+        <picture className="absolute inset-0">
+          <source media="(max-width: 1023px)" srcSet="/images/about-md.jpg" />
+          <Image
+            src="/images/about.jpg"
+            alt="LakeSprings Hotels exterior"
+            fill
+            priority
+            className="object-cover"
+            sizes="100vw"
+          />
+        </picture>
         <div className="absolute inset-0 bg-reservoir/50" />
         <div className="container-lake relative flex h-full items-end pb-12 text-white">
           <div>
