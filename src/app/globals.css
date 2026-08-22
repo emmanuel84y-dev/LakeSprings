@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes loaderReveal {
+  from { opacity: 0; transform: translateY(12px); letter-spacing: 0.08em; }
+  to { opacity: 1; transform: translateY(0); letter-spacing: 0.02em; }
+}
+
+@keyframes loaderProgress {
+  0% { transform: translateX(-130%); }
+  50% { transform: translateX(180%); }
+  100% { transform: translateX(420%); }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -15,7 +26,6 @@
   ::selection {
     @apply bg-brass/30;
   }
-  /* Visible keyboard focus everywhere, not just on inputs */
   :focus-visible {
     outline: 2px solid theme('colors.brass.DEFAULT');
     outline-offset: 3px;
@@ -48,9 +58,6 @@
     overflow-x: clip;
   }
 
-  /* Keep the booking controls inside the viewport on small screens.
-     The two-column desktop layout becomes a single column on phones,
-     while the step indicator becomes a compact three-column sequence. */
   @media (max-width: 767px) {
     .booking-page-flow > * {
       min-width: 0;
@@ -93,10 +100,6 @@
     }
   }
 
-  /* The signature element: a thin brass "waterline" between sections,
-     with a faint mirrored reflection of whatever sits above it —
-     literalizing the hotel's own name/setting rather than decorating
-     for its own sake. */
   .waterline {
     position: relative;
     height: 1px;
