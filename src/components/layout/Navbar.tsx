@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Waves } from 'lucide-react';
+import { CalendarDays, Menu, X, Waves } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
@@ -56,7 +56,9 @@ export function Navbar({ hotelName }: { hotelName: string }) {
           ))}
         </nav>
 
-        <div className="hidden lg:block"><Button href="/booking" size="sm"><span className="mr-1">▣</span> Book Now</Button></div>
+        <div className="hidden lg:block">
+          <Button href="/booking" size="sm"><CalendarDays className="h-4 w-4" />Book Now</Button>
+        </div>
 
         <button className="grid h-10 w-10 place-items-center text-reservoir lg:hidden" onClick={() => setOpen((v) => !v)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open}>
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
