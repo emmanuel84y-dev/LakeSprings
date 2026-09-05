@@ -16,7 +16,7 @@ const staticRoutes: MetadataRoute.Sitemap = [
 ].map(({ path, priority, changeFrequency }) => ({
   url: `${siteUrl}${path}`,
   priority,
-  changeFrequency,
+  changeFrequency: changeFrequency as MetadataRoute.Sitemap[number]['changeFrequency'],
 }));
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -40,7 +40,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/rooms/${encodeURIComponent(room.slug)}`,
       lastModified: room.updated_at ? new Date(room.updated_at) : undefined,
       priority: 0.8,
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
     }));
 
   const postRoutes: MetadataRoute.Sitemap = (posts ?? [])
@@ -49,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/blog/${encodeURIComponent(post.slug)}`,
       lastModified: post.updated_at ? new Date(post.updated_at) : undefined,
       priority: 0.7,
-      changeFrequency: 'monthly',
+      changeFrequency: 'monthly' as const,
     }));
 
   return [...staticRoutes, ...roomRoutes, ...postRoutes];
