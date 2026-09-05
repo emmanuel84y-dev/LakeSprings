@@ -34,7 +34,7 @@ export function Navbar({ hotelName }: { hotelName: string }) {
   if (pathname?.startsWith('/admin')) return null;
 
   return (
-    <header className={cn('sticky top-0 z-50 w-full border-b border-sand/60 bg-white/95 backdrop-blur-md transition-shadow duration-300', scrolled && 'shadow-sm')}>
+    <header className={cn('sticky top-0 z-50 relative w-full border-b border-sand/60 bg-white/95 backdrop-blur-md transition-shadow duration-300', scrolled && 'shadow-sm')}>
       <div className="container-lake flex h-[72px] items-center justify-between md:h-20">
         <Link href="/" className="flex items-center gap-2 font-display text-xl text-reservoir md:text-[22px]">
           <Waves className="h-6 w-6 text-brass" strokeWidth={1.5} />
@@ -65,7 +65,7 @@ export function Navbar({ hotelName }: { hotelName: string }) {
         </button>
       </div>
 
-      <div className={cn('overflow-hidden bg-reservoir transition-[max-height] duration-300 lg:hidden', open ? 'max-h-[28rem]' : 'max-h-0')}>
+      <div className={cn('absolute left-0 top-full w-full overflow-hidden bg-reservoir shadow-lg transition-[max-height] duration-300 lg:hidden', open ? 'max-h-[28rem]' : 'max-h-0')}>
         <nav className="container-lake flex flex-col gap-1 pb-6 pt-2">
           {links.map((link) => (
             <Link key={link.href} href={link.href} className={cn('rounded-md px-2 py-3 text-white/85 hover:bg-white/5 hover:text-white', pathname === link.href && 'text-brass')}>
