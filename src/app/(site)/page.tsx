@@ -6,7 +6,7 @@ import { Hero } from '@/components/layout/Hero';
 import { RoomCard } from '@/components/rooms/RoomCard';
 import { Button } from '@/components/ui/Button';
 import { resolveImageUrl } from '@/lib/utils';
-import type { HotelSettings, Testimonial } from '@/types/database';
+import type { GalleryItem, HotelSettings, Testimonial } from '@/types/database';
 import { Star } from 'lucide-react';
 
 async function getSettings(): Promise<HotelSettings | null> {
@@ -33,11 +33,80 @@ async function getSettingImages() {
   return { one: rows.find((row) => row.category === 'setting_1')?.storage_path ?? null, two: rows.find((row) => row.category === 'setting_2')?.storage_path ?? null };
 }
 
+async function getFeaturedGallery(): Promise<GalleryItem[]> {
+  const supabase = createClient();
+  const categories = ['hotel', 'rooms', 'restaurant', 'pool', 'exterior'] as const;
+  const counts = { hotel: 1, rooms: 2, restaurant: 2, pool: 1, exterior: 2 } as const;
+
+  const results = await Promise.all(
+    categories.map(async (category) => {
+      const { data } = await supabase
+        .from('gallery')
+        .select('*')
+        .eq('category', category)
+        .order('display_order', { ascending: true })
+        .order('created_at', { ascending: true })
+        .limit(counts[category]);
+      return (data as GalleryItem[]) ?? [];
+    }),
+  );
+
+  return results.flat();
+}
+
+const featuredGalleryCopy: Record<GalleryItem['category'], { title: string; description: string }> = {
+  hotel: {
+    title: 'Welcome to LakeSprings',
+    description: 'A first glimpse of the hotel and the calm, welcoming atmosphere that defines a LakeSprings stay.',
+  },
+  rooms: {
+    title: 'Comfort, Thoughtfully Designed',
+    description: 'A comfortable guest space designed to make relaxing, unwinding, and settling in feel effortless.',
+  },
+  restaurant: {
+    title: 'A Taste of LakeSprings',
+    description: 'An inviting dining setting made for relaxed meals, good conversation, and memorable moments.',
+  },
+  pool: {
+    title: 'Poolside Escape',
+    description: 'A refreshing place to slow down, unwind, and enjoy a leisurely afternoon at the hotel.',
+  },
+  exterior: {
+    title: 'A Grand Welcome',
+    description: 'A look at LakeSprings from the outside, capturing the property’s character and welcoming presence.',
+  },
+  facilities: { title: 'Hotel Facilities', description: 'Thoughtfully provided spaces and amenities for a comfortable stay.' },
+  events: { title: 'Moments Worth Celebrating', description: 'A versatile setting for gatherings, celebrations, and special occasions.' },
+  setting_1: { title: 'The LakeSprings Setting', description: 'Quiet surroundings that bring a sense of calm to every stay.' },
+  setting_2: { title: 'Beside Still Water', description: 'A peaceful glimpse of the setting that gives LakeSprings its character.' },
+};
+
+const featuredLabels: Record<GalleryItem['category'], string> = {
+  hotel: 'Hotel',
+  rooms: 'Rooms',
+  restaurant: 'Restaurant',
+  pool: 'Pool',
+  exterior: 'Exterior',
+  facilities: 'Facilities',
+  events: 'Events',
+  setting_1: 'Setting',
+  setting_2: 'Setting',
+};
+
 export default async function HomePage() {
-  const [settings, rooms, roomTypes, testimonials, settingImages] = await Promise.all([getSettings(), getFeaturedRooms(), getRoomTypes(), getTestimonials(), getSettingImages()]);
+  const [settings, rooms, roomTypes, testimonials, settingImages, featuredGallery] = await Promise.all([
+    getSettings(),
+    getFeaturedRooms(),
+    getRoomTypes(),
+    getTestimonials(),
+    getSettingImages(),
+    getFeaturedGallery(),
+  ]);
+
   return (
     <>
       <Hero name={settings?.name ?? 'LakeSprings Hotels'} tagline={settings?.tagline ?? 'Comfort. Stillness. Exceptional Hospitality.'} roomTypes={roomTypes} />
+
       <section className="reflect-below bg-mist py-24">
         <div className="container-lake">
           <div className="flex items-end justify-between"><div><p className="eyebrow">Featured Rooms</p><h2 className="mt-2 font-display text-3xl text-ink md:text-4xl">A room for every kind of stay</h2></div><Link href="/rooms" className="hidden text-sm font-medium text-brass hover:underline md:block">View all rooms →</Link></div>
@@ -45,6 +114,51 @@ export default async function HomePage() {
           <div className="mt-8 md:hidden"><Button href="/rooms" variant="outline" className="w-full justify-center">View all rooms</Button></div>
         </div>
       </section>
+
+      {featuredGallery.length > 0 && (
+        <section className="bg-white py-24">
+          <div className="container-lake">
+            <div className="flex items-end justify-between gap-6">
+              <div>
+                <p className="eyebrow">Featured Gallery</p>
+                <h2 className="mt-2 font-display text-3xl text-ink md:text-4xl">A glimpse of LakeSprings</h2>
+                <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink/60">Explore a handpicked selection of our rooms, dining spaces, pool, exterior, and the hotel itself.</p>
+              </div>
+              <Link href="/gallery" className="hidden text-sm font-medium text-brass hover:underline md:block">View full gallery →</Link>
+            </div>
+
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {featuredGallery.map((item, index) => {
+                const copy = featuredGalleryCopy[item.category];
+                const title = item.caption ?? `${copy.title}${item.category === 'rooms' && index > 1 ? '' : ''}`;
+                return (
+                  <article key={item.id} className="group overflow-hidden rounded-xl border border-sand bg-mist">
+                    <div className="relative aspect-[4/3] overflow-hidden bg-still">
+                      <Image
+                        src={resolveImageUrl(item.storage_path, 'gallery-images')}
+                        alt={title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                      <span className="absolute left-3 top-3 rounded-full bg-reservoir/90 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white">
+                        {featuredLabels[item.category]}
+                      </span>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-display text-xl text-ink">{title}</h3>
+                      <p className="mt-2 text-sm leading-relaxed text-ink/60">{copy.description}</p>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="mt-8 md:hidden"><Button href="/gallery" variant="outline" className="w-full justify-center">View full gallery</Button></div>
+          </div>
+        </section>
+      )}
+
       <div className="waterline" />
       <section className="bg-reservoir py-24 text-white">
         <div className="container-lake grid gap-10 md:grid-cols-2 md:items-center">
