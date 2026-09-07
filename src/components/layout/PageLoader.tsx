@@ -2,11 +2,22 @@
 
 import { useEffect, useState } from 'react';
 
+const LOADER_SESSION_KEY = 'lakesprings-loader-shown';
+
 export function PageLoader() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [leaving, setLeaving] = useState(false);
 
   useEffect(() => {
+    try {
+      if (window.sessionStorage.getItem(LOADER_SESSION_KEY) === '1') return;
+      window.sessionStorage.setItem(LOADER_SESSION_KEY, '1');
+    } catch {
+      // If storage is unavailable, still allow the loader to work normally.
+    }
+
+    setVisible(true);
+
     const finish = () => {
       setLeaving(true);
       window.setTimeout(() => setVisible(false), 650);
