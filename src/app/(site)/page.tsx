@@ -54,14 +54,31 @@ async function getFeaturedGallery(): Promise<GalleryItem[]> {
   return results.flat();
 }
 
-const featuredGalleryCopy: Record<GalleryItem['category'], { title: string; description: string }> = {
-  hotel: { title: 'Welcome to LakeSprings', description: 'A first glimpse of the hotel and the calm, welcoming atmosphere that defines a LakeSprings stay.' },
-  rooms: { title: 'Comfort, Thoughtfully Designed', description: 'A comfortable guest space designed to make relaxing, unwinding, and settling in feel effortless.' },
-  restaurant: { title: 'A Taste of LakeSprings', description: 'An inviting dining setting made for relaxed meals, good conversation, and memorable moments.' },
-  pool: { title: 'Poolside Escape', description: 'A refreshing place to slow down, unwind, and enjoy a leisurely afternoon at the hotel.' },
-  exterior: { title: 'A Grand Welcome', description: 'A look at LakeSprings from the outside, capturing the property’s character and welcoming presence.' },
-  facilities: { title: 'Hotel Facilities', description: 'Thoughtfully provided spaces and amenities for a comfortable stay.' },
-  events: { title: 'Moments Worth Celebrating', description: 'A versatile setting for gatherings, celebrations, and special occasions.' },
+const featuredGalleryCopy: Record<GalleryItem['category'], Array<{ title: string; description: string }>> = {
+  hotel: [
+    { title: 'Welcome to LakeSprings', description: 'A first glimpse of the hotel and the calm, welcoming atmosphere that defines a LakeSprings stay.' },
+  ],
+  rooms: [
+    { title: 'A Comfortable Retreat', description: 'A thoughtfully arranged guest space created for comfort, rest, and a relaxed stay.' },
+    { title: 'Your Private Escape', description: 'An inviting room setting where guests can settle in, unwind, and enjoy their time at LakeSprings.' },
+  ],
+  restaurant: [
+    { title: 'A Tasteful Dining Space', description: 'A welcoming setting for relaxed meals, good conversation, and enjoyable moments.' },
+    { title: 'Dining at LakeSprings', description: 'An inviting part of the hotel experience where guests can sit back and enjoy a satisfying meal.' },
+  ],
+  pool: [
+    { title: 'Poolside Escape', description: 'A refreshing space to slow down, unwind, and enjoy a leisurely moment at the hotel.' },
+  ],
+  exterior: [
+    { title: 'A Grand Welcome', description: 'A look at LakeSprings from the outside, capturing the property’s welcoming presence.' },
+    { title: 'The LakeSprings Experience', description: 'An exterior view that offers a glimpse of the setting guests can look forward to discovering.' },
+  ],
+  facilities: [
+    { title: 'Hotel Facilities', description: 'Thoughtfully provided spaces and amenities designed to support a comfortable stay.' },
+  ],
+  events: [
+    { title: 'Moments Worth Celebrating', description: 'A versatile setting for gatherings, celebrations, and special occasions.' },
+  ],
 };
 
 const featuredLabels: Record<GalleryItem['category'], string> = {
@@ -72,6 +89,8 @@ export default async function HomePage() {
   const [settings, rooms, roomTypes, testimonials, settingImages, featuredGallery] = await Promise.all([
     getSettings(), getFeaturedRooms(), getRoomTypes(), getTestimonials(), getSettingImages(), getFeaturedGallery(),
   ]);
+
+  const categoryIndexes: Partial<Record<GalleryItem['category'], number>> = {};
 
   return (
     <>
@@ -86,7 +105,7 @@ export default async function HomePage() {
       {featuredGallery.length > 0 && (
         <section className="bg-white py-24"><div className="container-lake">
           <div className="flex items-end justify-between gap-6"><div><p className="eyebrow">Featured Gallery</p><h2 className="mt-2 font-display text-3xl text-ink md:text-4xl">A glimpse of LakeSprings</h2><p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink/60">Explore a handpicked selection of our rooms, dining spaces, pool, exterior, and the hotel itself.</p></div><Link href="/gallery" className="hidden text-sm font-medium text-brass hover:underline md:block">View full gallery →</Link></div>
-          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{featuredGallery.map((item) => { const copy = featuredGalleryCopy[item.category]; const title = item.caption ?? copy.title; return <article key={item.id} className="group overflow-hidden rounded-xl border border-sand bg-mist"><div className="relative aspect-[4/3] overflow-hidden bg-still"><Image src={resolveImageUrl(item.storage_path, 'gallery-images')} alt={title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" /><span className="absolute left-3 top-3 rounded-full bg-reservoir/90 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white">{featuredLabels[item.category]}</span></div><div className="p-5"><h3 className="font-display text-xl text-ink">{title}</h3><p className="mt-2 text-sm leading-relaxed text-ink/60">{copy.description}</p></div></article>; })}</div>
+          <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{featuredGallery.map((item) => { const index = categoryIndexes[item.category] ?? 0; const copies = featuredGalleryCopy[item.category]; const copy = copies[index] ?? copies[0]; categoryIndexes[item.category] = index + 1; const title = item.caption ?? copy.title; return <article key={item.id} className="group overflow-hidden rounded-xl border border-sand bg-mist"><div className="relative aspect-[4/3] overflow-hidden bg-still"><Image src={resolveImageUrl(item.storage_path, 'gallery-images')} alt={title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" /><span className="absolute left-3 top-3 rounded-full bg-reservoir/90 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white">{featuredLabels[item.category]}</span></div><div className="p-5"><h3 className="font-display text-xl text-ink">{title}</h3><p className="mt-2 text-sm leading-relaxed text-ink/60">{copy.description}</p></div></article>; })}</div>
           <div className="mt-8 md:hidden"><Button href="/gallery" variant="outline" className="w-full justify-center">View full gallery</Button></div>
         </div></section>
       )}
