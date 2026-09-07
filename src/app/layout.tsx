@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Fraunces, Inter } from 'next/font/google';
 import './globals.css';
-import { PageLoader } from '@/components/layout/PageLoader';
 import { createClient } from '@/lib/supabase/server';
 import type { HotelSettings } from '@/types/database';
 
@@ -51,10 +50,7 @@ async function getHotelSettings(): Promise<HotelSettings | null> {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body>
-        <PageLoader />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
