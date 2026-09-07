@@ -2,17 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes loaderReveal {
-  from { opacity: 0; transform: translateY(12px); letter-spacing: 0.08em; }
-  to { opacity: 1; transform: translateY(0); letter-spacing: 0.02em; }
-}
-
-@keyframes loaderProgress {
-  0% { transform: translateX(-130%); }
-  50% { transform: translateX(180%); }
-  100% { transform: translateX(420%); }
-}
-
 @layer base {
   html {
     scroll-behavior: smooth;
