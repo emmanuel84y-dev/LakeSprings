@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Calendar } from 'lucide-react';
 
 function formatDisplay(value: string) {
   if (!value) return '';
@@ -37,32 +38,42 @@ export function DateInput({
   function openPicker() {
     const input = dateInputRef.current;
     if (!input) return;
-    if (typeof input.showPicker === 'function') input.showPicker();
-    else input.focus();
+
+    if (typeof input.showPicker === 'function') {
+      try {
+        input.showPicker();
+        return;
+      } catch {
+        // Fall back to the native date input focus below.
+      }
+    }
+
+    input.focus();
   }
 
+  const label = id === 'checkin' ? 'Check-in date' : id === 'checkout' ? 'Check-out date' : 'Date';
+
   return (
-    <div className="relative w-full">
-      <input
-        id={id}
-        type="text"
-        value={displayValue}
-        readOnly
-        required={required}
-        placeholder="dd/mm/yyyy"
-        aria-label={id === 'checkin' ? 'Check-in date, dd/mm/yyyy' : id === 'checkout' ? 'Check-out date, dd/mm/yyyy' : 'Date, dd/mm/yyyy'}
-        onClick={openPicker}
-        className="w-full cursor-pointer bg-transparent text-sm text-ink focus:outline-none"
-      />
+    <div className="relative h-12 w-full overflow-hidden rounded-md border border-sand bg-white transition-colors focus-within:border-brass focus-within:ring-1 focus-within:ring-brass">
+      <div className="pointer-events-none absolute inset-y-0 left-0 right-12 flex items-center px-4">
+        <span className={displayValue ? 'text-sm text-ink' : 'text-sm text-ink/45'}>
+          {displayValue || 'Select date (dd/mm/yyyy)'}
+        </span>
+      </div>
+
+      <Calendar className="pointer-events-none absolute right-4 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-ink/55" aria-hidden="true" />
+
       <input
         ref={dateInputRef}
+        id={id}
         type="date"
         value={value}
         min={min}
+        required={required}
+        aria-label={`${label}, format dd/mm/yyyy`}
         onChange={(e) => handleDateChange(e.target.value)}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="pointer-events-none absolute right-0 top-0 h-full w-full opacity-0"
+        onClick={openPicker}
+        className="absolute inset-0 z-20 h-full w-full cursor-pointer opacity-0"
       />
     </div>
   );
