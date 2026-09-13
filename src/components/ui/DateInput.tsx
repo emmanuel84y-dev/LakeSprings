@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Calendar } from 'lucide-react';
 
 function formatDisplay(value: string) {
   if (!value) return '';
@@ -43,8 +42,6 @@ export function DateInput({
           {displayValue || 'Select date (dd/mm/yyyy)'}
         </span>
       </div>
-
-      <Calendar className="pointer-events-none absolute right-4 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-ink/55" aria-hidden="true" />
 
       <input
         id={id}
