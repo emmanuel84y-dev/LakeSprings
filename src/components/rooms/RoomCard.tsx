@@ -17,6 +17,7 @@ export function RoomCard({ room }: { room: RoomWithImages }) {
             alt={primary.alt_text || room.name}
             fill
             sizes="(min-width: 1024px) 33vw, 100vw"
+            quality={75}
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
