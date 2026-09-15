@@ -15,8 +15,8 @@ export function Hero({
   return (
     <section className="relative overflow-visible">
       <div className="relative h-auto min-h-[720px] w-full overflow-hidden md:h-[790px] md:min-h-0">
-        <Image src="/images/hero-sm.jpg" alt={`${name} viewed across the lake`} fill priority sizes="100vw" className="object-cover object-center md:hidden" />
-        <Image src="/images/hero.jpg" alt={`${name} viewed across the lake`} fill priority sizes="100vw" className="hidden object-cover object-center md:block" />
+        <Image src="/images/hero-sm.jpg" alt={`${name} viewed across the lake`} fill priority quality={75} sizes="100vw" className="object-cover object-center md:hidden" />
+        <Image src="/images/hero.jpg" alt={`${name} viewed across the lake`} fill quality={75} sizes="100vw" className="hidden object-cover object-center md:block" />
 
         <div className="absolute inset-0 bg-gradient-to-r from-reservoir/90 via-reservoir/45 to-reservoir/10" />
         <div className="absolute inset-0 bg-gradient-to-t from-reservoir/85 via-transparent to-reservoir/20" />
