@@ -40,7 +40,7 @@ export function Hero({
 
           <div className="mt-7 flex w-full animate-rise flex-col gap-3 sm:flex-row md:mt-9 md:w-auto md:gap-4">
             <Button href="/booking" size="lg" className="w-full shadow-lg sm:w-auto"><CalendarCheck className="h-4 w-4" />Book Your Stay</Button>
-            <Button href="/rooms" size="lg" variant="outline" className="w-full border-white/80 bg-white/5 text-white backdrop-blur-sm hover:bg-white hover:text-reservoir sm:w-auto"><BedDouble className="h-4 w-4" />Explore Rooms</Button>
+            <Button href="/rooms" size="lg" variant="outline" className="w-full border-white/80 bg-white/5 text-white backdrop-blur-sm hover:bg-white hover:text-black sm:w-auto"><BedDouble className="h-4 w-4" />Explore Rooms</Button>
           </div>
 
           <div className="mt-8 grid w-full max-w-2xl grid-cols-3 gap-2 border-t border-white/20 pt-5 sm:mt-10 sm:gap-4 sm:pt-6 md:mt-12 md:pt-7">
