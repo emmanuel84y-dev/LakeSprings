@@ -8,7 +8,6 @@ import { resolveImageUrl } from '@/lib/utils';
 import type { GalleryItem, HotelSettings, RoomWithImages, Testimonial } from '@/types/database';
 import { Star } from 'lucide-react';
 
-// Public hotel content changes infrequently, so keep the rendered homepage cached.
 export const revalidate = 600;
 
 const featuredCategories = ['hotel', 'rooms', 'restaurant', 'pool', 'exterior'] as const;
@@ -18,11 +17,7 @@ async function getHomeData() {
   const supabase = createPublicClient();
 
   const [settingsResult, roomsResult, testimonialsResult, galleryResult] = await Promise.all([
-    supabase
-      .from('hotel_settings')
-      .select('name, tagline, description')
-      .eq('id', 1)
-      .maybeSingle(),
+    supabase.from('hotel_settings').select('name, tagline, description').eq('id', 1).maybeSingle(),
     supabase
       .from('rooms')
       .select('id, slug, name, room_type, description, max_guests, bed_type, price_per_night, featured, room_images(storage_path, alt_text, is_primary)')
@@ -30,15 +25,12 @@ async function getHomeData() {
       .eq('archived', false)
       .order('featured', { ascending: false })
       .order('price_per_night', { ascending: true }),
-    supabase
-      .from('testimonials')
-      .select('id, guest_name, location, rating, review')
-      .eq('published', true)
-      .order('featured', { ascending: false })
-      .limit(3),
+    supabase.from('testimonials').select('id, guest_name, location, rating, review').eq('published', true).order('featured', { ascending: false }).limit(3),
+    // gallery does not have an alt_text column; selecting it makes this query fail and
+    // causes both the featured gallery and The Setting images to disappear.
     supabase
       .from('gallery')
-      .select('id, category, storage_path, caption, alt_text, display_order, created_at')
+      .select('id, category, storage_path, caption, display_order, created_at')
       .in('category', [...featuredCategories, 'setting_1', 'setting_2'])
       .order('display_order', { ascending: true })
       .order('created_at', { ascending: true }),
@@ -64,9 +56,7 @@ async function getHomeData() {
 }
 
 const featuredGalleryCopy: Record<GalleryItem['category'], Array<{ title: string; description: string }>> = {
-  hotel: [
-    { title: 'Welcome to LakeSprings', description: 'A first glimpse of the hotel and the calm, welcoming atmosphere that defines a LakeSprings stay.' },
-  ],
+  hotel: [{ title: 'Welcome to LakeSprings', description: 'A first glimpse of the hotel and the calm, welcoming atmosphere that defines a LakeSprings stay.' }],
   rooms: [
     { title: 'A Comfortable Retreat', description: 'A thoughtfully arranged guest space created for comfort, rest, and a relaxed stay.' },
     { title: 'Your Private Escape', description: 'An inviting room setting where guests can settle in, unwind, and enjoy their time at LakeSprings.' },
@@ -75,19 +65,13 @@ const featuredGalleryCopy: Record<GalleryItem['category'], Array<{ title: string
     { title: 'A Tasteful Dining Space', description: 'A welcoming setting for relaxed meals, good conversation, and enjoyable moments.' },
     { title: 'Dining at LakeSprings', description: 'An inviting part of the hotel experience where guests can sit back and enjoy a satisfying meal.' },
   ],
-  pool: [
-    { title: 'Poolside Escape', description: 'A refreshing space to slow down, unwind, and enjoy a leisurely moment at the hotel.' },
-  ],
+  pool: [{ title: 'Poolside Escape', description: 'A refreshing space to slow down, unwind, and enjoy a leisurely moment at the hotel.' }],
   exterior: [
     { title: 'A Grand Welcome', description: 'A look at LakeSprings from the outside, capturing the property’s welcoming presence.' },
     { title: 'The LakeSprings Experience', description: 'An exterior view that offers a glimpse of the setting guests can look forward to discovering.' },
   ],
-  facilities: [
-    { title: 'Hotel Facilities', description: 'Thoughtfully provided spaces and amenities designed to support a comfortable stay.' },
-  ],
-  events: [
-    { title: 'Moments Worth Celebrating', description: 'A versatile setting for gatherings, celebrations, and special occasions.' },
-  ],
+  facilities: [{ title: 'Hotel Facilities', description: 'Thoughtfully provided spaces and amenities designed to support a comfortable stay.' }],
+  events: [{ title: 'Moments Worth Celebrating', description: 'A versatile setting for gatherings, celebrations, and special occasions.' }],
 };
 
 const featuredLabels: Record<GalleryItem['category'], string> = {
@@ -112,7 +96,7 @@ export default async function HomePage() {
         <section className="bg-white py-24"><div className="container-lake">
           <div className="flex items-end justify-between gap-6"><div><p className="eyebrow">Featured Gallery</p><h2 className="mt-2 font-display text-3xl text-ink md:text-4xl">A glimpse of LakeSprings</h2><p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink/60">Explore a handpicked selection of our rooms, dining spaces, pool, exterior, and the hotel itself.</p></div><Link href="/gallery" className="hidden text-sm font-medium text-brass hover:underline md:block">View full gallery →</Link></div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">{featuredGallery.map((item) => { const index = categoryIndexes[item.category] ?? 0; const copies = featuredGalleryCopy[item.category]; const copy = copies[index] ?? copies[0]; categoryIndexes[item.category] = index + 1; const title = item.caption ?? copy.title; return <article key={item.id} className="group overflow-hidden rounded-xl border border-sand bg-mist"><div className="relative aspect-[4/3] overflow-hidden bg-still"><Image src={resolveImageUrl(item.storage_path, 'gallery-images')} alt={title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" quality={60} /><span className="absolute left-3 top-3 rounded-full bg-reservoir/90 px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-white">{featuredLabels[item.category]}</span></div><div className="p-5"><h3 className="font-display text-xl text-ink">{title}</h3><p className="mt-2 text-sm leading-relaxed text-ink/60">{copy.description}</p></div></article>; })}</div>
-          <div className="mt-8 md:hidden"><Button href="/gallery" variant="outline" className="w-full justify-center">View full gallery</Button></div>
+          <div className="mt-8 md:hidden"><Button href="/gallery" variant="outline" className="w-full justify-center">View full gallery →</Button></div>
         </div></section>
       )}
       <div className="waterline" /><section className="bg-reservoir py-24 text-white"><div className="container-lake grid gap-10 md:grid-cols-2 md:items-center"><div><p className="eyebrow text-brass/90">The Setting</p><h2 className="mt-2 font-display text-3xl font-semibold leading-tight text-brass md:text-4xl">Beside still water, in the middle of the city</h2><p className="mt-4 max-w-md text-white/70">{settings?.description}</p><Button href="/about" variant="outline" className="mt-6 border-white text-white hover:bg-white hover:text-reservoir">About LakeSprings</Button></div><div className="grid grid-cols-2 gap-4">{settingImages.one ? <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-still"><Image src={resolveImageUrl(settingImages.one, 'gallery-images')} alt="LakeSprings setting" fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" quality={60} /></div> : <div className="aspect-[3/4] overflow-hidden rounded-lg bg-still" />}{settingImages.two ? <div className="relative mt-8 aspect-[3/4] overflow-hidden rounded-lg bg-still"><Image src={resolveImageUrl(settingImages.two, 'gallery-images')} alt="LakeSprings setting" fill className="object-cover" sizes="(max-width: 768px) 50vw, 25vw" quality={60} /></div> : <div className="mt-8 aspect-[3/4] overflow-hidden rounded-lg bg-still" />}</div></div></section>
