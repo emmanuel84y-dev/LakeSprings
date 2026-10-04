@@ -37,7 +37,6 @@ export function hotelJsonLd() {
         '@id': `${siteUrl}/#organization`,
         name: 'LakeSprings Hotels',
         url: siteUrl,
-        logo: `${siteUrl}/images/hero.jpg`,
       },
       {
         '@type': 'WebSite',
