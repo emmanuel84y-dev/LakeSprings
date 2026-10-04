@@ -27,8 +27,16 @@ export default async function RoomDetailPage({ params }: { params: { slug: strin
   const room = await getRoomBySlug(params.slug);
   if (!room) notFound();
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: 'Home', url: siteUrl },
+    { name: 'Rooms & Suites', url: `${siteUrl}/rooms` },
+    { name: room.name, url: `${siteUrl}/rooms/${encodeURIComponent(room.slug)}` },
+  ]);
+
   return (
-    <div className="container-lake py-10 md:py-16">
+    <>
+      <JsonLd data={breadcrumbs} />
+      <div className="container-lake py-10 md:py-16">
       <BackLink href="/rooms" className="mb-6" />
       <p className="eyebrow">{room.room_type}</p>
       <h1 className="mt-2 font-display text-4xl text-ink md:text-5xl">{room.name}</h1>
