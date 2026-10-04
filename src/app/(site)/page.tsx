@@ -9,6 +9,12 @@ import type { GalleryItem, HotelSettings, RoomWithImages, Testimonial } from '@/
 import { Star } from 'lucide-react';
 import { JsonLd, hotelJsonLd } from '@/components/seo/JsonLd';
 
+export const metadata = {
+  title: 'LakeSprings Hotels | Hotel in Agodi, Ibadan, Oyo State',
+  description: 'LakeSprings Hotels offers comfortable rooms and a serene stay at 14 Agodi Reservoir Road, Ibadan, Oyo State, Nigeria.',
+  alternates: { canonical: 'https://www.lakespringshotels.com.ng/' },
+};
+
 export const revalidate = 600;
 
 const featuredCategories = ['hotel', 'rooms', 'restaurant', 'pool', 'exterior'] as const;
