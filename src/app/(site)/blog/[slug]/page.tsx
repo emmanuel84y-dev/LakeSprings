@@ -72,6 +72,7 @@ export default async function BlogPostPage({
           ))}
         </div>
       )}
-    </article>
+      </article>
+    </>
   );
 }
