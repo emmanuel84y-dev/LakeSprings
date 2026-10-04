@@ -4,7 +4,7 @@ import { getRooms } from '@/lib/data/rooms';
 import { BookingFlow } from '@/components/booking/BookingFlow';
 import { EmptyState } from '@/components/ui/EmptyState';
 
-export const metadata: Metadata = { title: 'Book Your Stay' };
+export const metadata: Metadata = { title: 'Book Your Stay', description: 'Check rooms and book your stay at LakeSprings Hotels in Ibadan, Oyo State.', alternates: { canonical: 'https://www.lakespringshotels.com.ng/booking' } };
 
 interface SearchParams {
   room?: string;
