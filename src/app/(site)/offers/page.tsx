@@ -5,7 +5,7 @@ import { EmptyState } from '@/components/ui/EmptyState';
 import { Button } from '@/components/ui/Button';
 import { formatDate } from '@/lib/utils';
 
-export const metadata: Metadata = { title: 'Offers' };
+export const metadata: Metadata = { title: 'Hotel Offers & Promotions', description: 'See current room offers and promotions available at LakeSprings Hotels in Ibadan.', alternates: { canonical: 'https://www.lakespringshotels.com.ng/offers' } };
 
 export default async function OffersPage() {
   const offers = await getActiveOffers();
