@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { getHotelSettings } from '@/lib/data/content';
 import { Button } from '@/components/ui/Button';
 
-export const metadata: Metadata = { title: 'About' };
+export const metadata: Metadata = { title: 'About LakeSprings Hotels', description: 'Learn about LakeSprings Hotels, a serene hotel on Agodi Reservoir Road in Ibadan, Oyo State.', alternates: { canonical: 'https://www.lakespringshotels.com.ng/about' } };
 
 export default async function AboutPage() {
   const settings = await getHotelSettings();
