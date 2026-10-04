@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lakespringshotels.com.ng').replace(/\/$/, '');
+const siteUrl = 'https://www.lakespringshotels.com.ng';
 
 export default function robots(): MetadataRoute.Robots {
   return {
