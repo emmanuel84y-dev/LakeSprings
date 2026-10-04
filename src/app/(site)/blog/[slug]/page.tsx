@@ -31,8 +31,16 @@ export default async function BlogPostPage({
 
   if (!post) notFound();
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: 'Home', url: siteUrl },
+    { name: 'Blog', url: `${siteUrl}/blog` },
+    { name: post.title, url: `${siteUrl}/blog/${encodeURIComponent(post.slug)}` },
+  ]);
+
   return (
-    <article className="container-lake max-w-2xl py-16">
+    <>
+      <JsonLd data={breadcrumbs} />
+      <article className="container-lake max-w-2xl py-16">
       <BackLink href="/blog" className="mb-6" />
       <p className="eyebrow">
         {post.blog_categories?.name ?? 'Hotel News'}
