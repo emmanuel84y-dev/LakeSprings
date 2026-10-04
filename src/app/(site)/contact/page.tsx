@@ -3,7 +3,7 @@ import { MapPin, Phone, Mail } from 'lucide-react';
 import { getHotelSettings } from '@/lib/data/content';
 import { ContactForm } from '@/components/forms/ContactForm';
 
-export const metadata: Metadata = { title: 'Contact' };
+export const metadata: Metadata = { title: 'Contact LakeSprings Hotels', description: 'Contact LakeSprings Hotels in Ibadan for room enquiries, reservations, directions, and other questions.', alternates: { canonical: 'https://www.lakespringshotels.com.ng/contact' } };
 
 export default async function ContactPage() {
   const settings = await getHotelSettings();
