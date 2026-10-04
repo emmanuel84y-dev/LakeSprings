@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { VisitRequestForm } from '@/components/forms/VisitRequestForm';
 
-export const metadata: Metadata = { title: 'Schedule a Visit' };
+export const metadata: Metadata = { title: 'Schedule a Visit', description: 'Arrange a visit to LakeSprings Hotels in Ibadan before your stay, event, or booking.', alternates: { canonical: 'https://www.lakespringshotels.com.ng/visit' } };
 
 export default function VisitPage() {
   return (
