@@ -16,21 +16,24 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lakespringshotels.com.ng'),
+  metadataBase: new URL('https://www.lakespringshotels.com.ng'),
   title: {
-    default: 'LakeSprings Hotels — Comfort. Stillness. Exceptional Hospitality.',
+    default: 'LakeSprings Hotels | Hotel in Agodi, Ibadan, Oyo State',
     template: '%s — LakeSprings Hotels',
   },
   description:
-    'A serene escape where comfort meets tranquility. Relax, unwind, and experience a more effortless stay at LakeSprings Hotels.',
+    'LakeSprings Hotels offers comfortable rooms and a serene stay at 14 Agodi Reservoir Road, Ibadan, Oyo State, Nigeria.',
+  alternates: { canonical: 'https://www.lakespringshotels.com.ng/' },
   openGraph: {
-    title: 'LakeSprings Hotels',
+    title: 'LakeSprings Hotels | Hotel in Agodi, Ibadan',
     description:
-      'A serene escape where comfort meets tranquility. Relax, unwind, and experience a more effortless stay at LakeSprings Hotels.',
+      'LakeSprings Hotels offers comfortable rooms and a serene stay in Ibadan, Oyo State, Nigeria.',
     siteName: 'LakeSprings Hotels',
     type: 'website',
+    url: 'https://www.lakespringshotels.com.ng/',
+    images: [{ url: '/images/hero.jpg', width: 1920, height: 1080, alt: 'LakeSprings Hotels in Ibadan' }],
   },
-  twitter: { card: 'summary_large_image' },
+  twitter: { card: 'summary_large_image', title: 'LakeSprings Hotels | Hotel in Agodi, Ibadan', description: 'Comfortable hotel rooms and a serene stay in Ibadan, Oyo State, Nigeria.', images: ['/images/hero.jpg'] },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
