@@ -4,6 +4,7 @@ import { getBlogPostBySlug } from '@/lib/data/content';
 import { formatDate } from '@/lib/utils';
 import { BackLink } from '@/components/layout/BackLink';
 import { MarkdownContent } from '@/components/blog/MarkdownContent';
+import { JsonLd, breadcrumbJsonLd, siteUrl } from '@/components/seo/JsonLd';
 
 export async function generateMetadata({
   params,
@@ -16,6 +17,7 @@ export async function generateMetadata({
 
   return {
     title: post.seo_title || post.title,
+    alternates: { canonical: `${siteUrl}/blog/${encodeURIComponent(post.slug)}` },
     description: post.seo_description || post.excerpt || undefined,
   };
 }
