@@ -6,6 +6,7 @@ import { RoomGallery } from '@/components/rooms/RoomGallery';
 import { RoomAvailabilityWidget } from '@/components/booking/RoomAvailabilityWidget';
 import { BackLink } from '@/components/layout/BackLink';
 import { formatCurrency } from '@/lib/utils';
+import { JsonLd, breadcrumbJsonLd, siteUrl } from '@/components/seo/JsonLd';
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const room = await getRoomBySlug(params.slug);
@@ -13,6 +14,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   return {
     title: room.name,
     description: room.description.slice(0, 155),
+    alternates: { canonical: `${siteUrl}/rooms/${encodeURIComponent(room.slug)}` },
     openGraph: {
       title: room.name,
       description: room.description.slice(0, 155),
