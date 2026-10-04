@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { getGallery } from '@/lib/data/content';
 import { GalleryBrowser } from '@/components/gallery/GalleryBrowser';
 
-export const metadata: Metadata = { title: 'Gallery' };
+export const metadata: Metadata = { title: 'Hotel Gallery', description: 'View rooms, hotel spaces, dining areas, pool, and exterior photos from LakeSprings Hotels in Ibadan.', alternates: { canonical: 'https://www.lakespringshotels.com.ng/gallery' } };
 
 const validCategories = ['hotel', 'rooms', 'restaurant', 'pool', 'facilities', 'events', 'exterior'] as const;
 type GalleryCategory = (typeof validCategories)[number];
