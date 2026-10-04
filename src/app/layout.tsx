@@ -23,7 +23,6 @@ export const metadata: Metadata = {
   },
   description:
     'LakeSprings Hotels offers comfortable rooms and a serene stay at 14 Agodi Reservoir Road, Ibadan, Oyo State, Nigeria.',
-  alternates: { canonical: 'https://www.lakespringshotels.com.ng/' },
   openGraph: {
     title: 'LakeSprings Hotels | Hotel in Agodi, Ibadan',
     description:
