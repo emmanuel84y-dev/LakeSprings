@@ -85,6 +85,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <JsonLd data={hotelJsonLd()} />
       <Hero name={settings?.name ?? 'LakeSprings Hotels'} tagline={settings?.tagline ?? 'Comfort. Stillness. Exceptional Hospitality.'} roomTypes={roomTypes} />
       <section className="reflect-below bg-mist py-24">
         <div className="container-lake">
