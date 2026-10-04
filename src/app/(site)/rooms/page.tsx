@@ -8,7 +8,8 @@ import { formatDate } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Rooms & Suites',
-  description: 'Browse LakeSprings Hotels rooms and suites, and check live availability for your dates.',
+  description: 'Browse LakeSprings Hotels rooms and suites in Ibadan, Oyo State, and check availability for your stay.',
+  alternates: { canonical: 'https://www.lakespringshotels.com.ng/rooms' },
 };
 
 interface SearchParams {
