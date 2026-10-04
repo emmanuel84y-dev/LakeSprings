@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { createClient } from '@/lib/supabase/server';
 
-const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://lakespringshotels.com.ng').replace(/\/$/, '');
+const siteUrl = 'https://www.lakespringshotels.com.ng';
 
 const staticRoutes: MetadataRoute.Sitemap = [
   { path: '', priority: 1, changeFrequency: 'weekly' },
