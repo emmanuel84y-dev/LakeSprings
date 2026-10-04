@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { resolveImageUrl } from '@/lib/utils';
 import type { GalleryItem, HotelSettings, RoomWithImages, Testimonial } from '@/types/database';
 import { Star } from 'lucide-react';
+import { JsonLd, hotelJsonLd } from '@/components/seo/JsonLd';
 
 export const revalidate = 600;
 
