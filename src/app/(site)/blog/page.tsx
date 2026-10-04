@@ -5,7 +5,7 @@ import { getBlogPosts } from '@/lib/data/content';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { formatDate } from '@/lib/utils';
 
-export const metadata: Metadata = { title: 'Blog' };
+export const metadata: Metadata = { title: 'Blog & Hotel Journal', description: 'Stories, updates, and useful guides from LakeSprings Hotels in Ibadan.', alternates: { canonical: 'https://www.lakespringshotels.com.ng/blog' } };
 
 export default async function BlogPage() {
   const posts = await getBlogPosts();
