@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     siteName: 'LakeSprings Hotels',
     type: 'website',
     url: 'https://www.lakespringshotels.com.ng/',
-    images: [{ url: '/images/hero.jpg', width: 1920, height: 1080, alt: 'LakeSprings Hotels in Ibadan' }],
+    images: [{ url: '/icon.png', width: 512, height: 512, alt: 'LakeSprings Hotels logo' }],
   },
   twitter: { card: 'summary_large_image', title: 'LakeSprings Hotels | Hotel in Agodi, Ibadan', description: 'Comfortable hotel rooms and a serene stay in Ibadan, Oyo State, Nigeria.', images: ['/images/hero.jpg'] },
 };
