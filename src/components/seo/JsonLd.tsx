@@ -22,7 +22,6 @@ export function hotelJsonLd() {
         '@id': `${siteUrl}/#hotel`,
         name: 'LakeSprings Hotels',
         url: siteUrl,
-        image: [`${siteUrl}/images/hero.jpg`],
         description: 'LakeSprings Hotels is a hotel in Ibadan, Oyo State, Nigeria, offering comfortable rooms and a calm stay beside the lake.',
         address: {
           '@type': 'PostalAddress',
