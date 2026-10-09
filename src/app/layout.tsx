@@ -31,7 +31,12 @@ export const metadata: Metadata = {
     type: 'website',
     url: 'https://www.lakespringshotels.com.ng/',
   },
-  twitter: { card: 'summary_large_image', title: 'LakeSprings Hotels | Hotel in Agodi, Ibadan', description: 'Comfortable hotel rooms and a serene stay in Ibadan, Oyo State, Nigeria.', images: ['/images/hero.jpg'] },
+  twitter: {
+    card: 'summary',
+    title: 'LakeSprings Hotels | Hotel in Agodi, Ibadan',
+    description:
+      'Comfortable hotel rooms and a serene stay in Ibadan, Oyo State, Nigeria.',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
